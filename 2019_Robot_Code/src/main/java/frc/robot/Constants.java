@@ -22,4 +22,7 @@ public class Constants {
     //Joystick Constants
     public static final int joystickPort = 0;
     public static Joystick driveJoystick;
+
+    //Team Constants
+    public static final String teamNumber = "1699";
 }

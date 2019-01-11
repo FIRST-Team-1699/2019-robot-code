@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -15,19 +17,22 @@ public class Robot extends TimedRobot {
         Constants.portSlave = new VictorSP(Constants.portSlavePort);
         Constants.starboardMaster = new VictorSP(Constants.starboardMasterPort);
         Constants.starboardSlave = new VictorSP(Constants.starboardSlavePort);
-
         SpeedControllerGroup portMotorGroup = new SpeedControllerGroup(Constants.portMaster, Constants.portSlave);
         SpeedControllerGroup starboardMotorGroup = new SpeedControllerGroup(Constants.starboardMaster, Constants.starboardSlave);
-
         Constants.driveTrain = new DifferentialDrive(portMotorGroup, starboardMotorGroup);
 
         //Joystick Controller Definition
         Constants.driveJoystick = new Joystick(Constants.joystickPort);
+
+        //Start Camera
+        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+        camera.setResolution(640, 480);
     }
 
     @Override
     public void robotPeriodic() {
-        
+        //Run Drive Base
+        Constants.driveTrain.arcadeDrive(Constants.driveJoystick.getX(), Constants.driveJoystick.getY()); //TODO Check correct axis
     }
 
     @Override
