@@ -12,10 +12,10 @@ public class Constants {
     public static VictorSP starboardMaster;
     public static VictorSP starboardSlave;
 
-    public static final int portMasterPort = 0;
-    public static final int portSlavePort = 1;
-    public static final int starboardMasterPort = 2;
-    public static final int starboardSlavePort = 3;
+    public static final int portMasterPort = 4;
+    public static final int portSlavePort = 5;
+    public static final int starboardMasterPort = 0;
+    public static final int starboardSlavePort = 1;
 
     public static DifferentialDrive driveTrain;
 

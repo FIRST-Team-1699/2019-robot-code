@@ -1,8 +1,8 @@
-package frc.robot.Vision;
+package frc.robot.vision;
 
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
-import frc.robot.Utils.NetworkTableClient;
+import frc.robot.utils.NetworkTableClient;
 
 public class PIDCamera implements PIDSource {
 
