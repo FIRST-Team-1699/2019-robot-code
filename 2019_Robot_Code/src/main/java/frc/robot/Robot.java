@@ -15,6 +15,8 @@ public class Robot extends TimedRobot {
         //Motor Controller Definition
         Constants.portMaster = new VictorSP(Constants.portMasterPort);
         Constants.portSlave = new VictorSP(Constants.portSlavePort);
+        Constants.portMaster.setInverted(true);
+        Constants.portSlave.setInverted(true);
         Constants.starboardMaster = new VictorSP(Constants.starboardMasterPort);
         Constants.starboardSlave = new VictorSP(Constants.starboardSlavePort);
         SpeedControllerGroup portMotorGroup = new SpeedControllerGroup(Constants.portMaster, Constants.portSlave);
@@ -27,12 +29,14 @@ public class Robot extends TimedRobot {
         //Start Camera
         UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
         camera.setResolution(640, 480);
+        camera.setBrightness(10);
+        camera.setExposureManual(10);
     }
 
     @Override
     public void robotPeriodic() {
         //Run Drive Base
-        Constants.driveTrain.arcadeDrive(Constants.driveJoystick.getX(), Constants.driveJoystick.getY()); //TODO Check correct axis
+        Constants.driveTrain.arcadeDrive(Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getY()); //TODO Check correct axis
     }
 
     @Override
@@ -47,6 +51,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+
     }
 
     @Override
