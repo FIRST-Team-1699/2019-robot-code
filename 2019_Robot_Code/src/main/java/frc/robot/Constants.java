@@ -25,4 +25,7 @@ public class Constants {
 
     //Team Constants
     public static final String teamNumber = "1699";
+
+    //PID Controller Goal Constants
+    public static final double visionGoalConstant = 0; //TODO Change if needed
 }

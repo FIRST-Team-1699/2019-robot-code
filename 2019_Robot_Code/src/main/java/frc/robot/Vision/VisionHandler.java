@@ -1,16 +1,15 @@
 package frc.robot.Vision;
 
-import edu.wpi.first.wpilibj.drive.RobotDriveBase;
+import edu.wpi.first.wpilibj.PIDController;
 
 public class VisionHandler {
+    private final PIDController pidController;
 
-    private final RobotDriveBase driveTrain;
-
-    public VisionHandler(final RobotDriveBase driveTrain){
-        this.driveTrain = driveTrain;
+    public VisionHandler(){
+        this.pidController = new PIDController(0, 0, 0, new PIDCamera("none"), null); //TODO Fix PIDOutput and K values
     }
 
-    public boolean alignToTarget(){
-        return false; //TODO Populate with code to align to vision target
+    public double driveOutput(){
+        return pidController.get(); //TODO Test correct output
     }
 }
