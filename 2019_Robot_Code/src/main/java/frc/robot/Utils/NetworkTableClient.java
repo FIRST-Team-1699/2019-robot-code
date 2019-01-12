@@ -1,8 +1,12 @@
 package frc.robot.Utils;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /*
 * Use for reference:
@@ -24,8 +28,11 @@ public class NetworkTableClient implements Runnable{
     //Thread vars
     private Thread thread;
     private boolean running;
+    private final Map<String, NetworkTableEntry> ntMap;
 
-    private NetworkTableClient(){}
+    private NetworkTableClient(){
+        ntMap = new HashMap<>();
+    }
 
     @Override
     public void run() {
@@ -39,7 +46,22 @@ public class NetworkTableClient implements Runnable{
         //TODO Add entries
         while(running){
             //TODO Populate
+            //Loop keys in ntMap, and assign to TableEntry
+            for(String key : ntMap.keySet()){
+                synchronized (ntMap){
+                    ntMap.put(key, ntInstance.getEntry(key));
+                }
+            }
         }
+    }
+
+    //Map methods
+    public void addEntryKey(final String key){
+        ntMap.put(key, null);
+    }
+
+    public synchronized NetworkTableEntry getEntry(final String key){
+        return ntMap.get(key);
     }
 
     //Used to start/stop the threads
