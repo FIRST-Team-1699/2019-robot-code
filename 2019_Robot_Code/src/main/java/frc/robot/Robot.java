@@ -13,9 +13,9 @@ import frc.robot.utils.NetworkTableClient;
 
 public class Robot extends TimedRobot {
 
-    NetworkTableClient nTableClient;
-    NetworkTableInstance nTable;
-    NetworkTableEntry xEntry;
+    private NetworkTableClient nTableClient;
+    private NetworkTableInstance nTable;
+    private NetworkTableEntry xEntry;
 
     @Override
     public void robotInit() {
@@ -31,16 +31,14 @@ public class Robot extends TimedRobot {
         Constants.driveTrain = new DifferentialDrive(portMotorGroup, starboardMotorGroup);
         
         //Network table variables 
-        nTableClient = NetworkTableClient.getInstance();
+        nTableClient = NetworkTableClient.getInstance(); //TODO Implement or remove
         NetworkTableInstance nTable = NetworkTableInstance.getDefault();
         nTable.getTable("GRIP/myContoursReport");
-
         xEntry = nTable.getEntry("centerX");
 
 
 
         //Joystick Controller Definition
-
         Constants.driveJoystick = new Joystick(Constants.joystickPort);
 
         //Start Camera
@@ -55,12 +53,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         //Run Drive Base
-        
         Constants.driveTrain.arcadeDrive(Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getY()); //TODO Check correct axis
-        
-        //xEntry.setDouble(testx++);
-        //double[] deft = {0.0};
-        System.out.println("X: " + xEntry.getDoubleArray(deft)[1]);
+
+        System.out.println("X: " + xEntry.getDoubleArray(deft)[0] + xEntry.getDoubleArray(deft)[1]);
         
     }
 
