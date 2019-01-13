@@ -28,4 +28,7 @@ public class Constants {
 
     //PID Controller Goal Constants
     public static final double visionGoalConstant = 0; //TODO Change if needed
+
+    //Ultrasonic Sensor Constant
+    public static final int ultrasonicPortConstant = 0;
 }
