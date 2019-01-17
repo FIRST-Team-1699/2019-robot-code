@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.subsystems.Gyro;
+import frc.robot.subsystems.Ultrasonic;
 
 public class Constants {
 
@@ -46,4 +48,11 @@ public class Constants {
     //Vision Constants
     public static Relay lightRelay;
     public static final int lightRelatPort = 0;
+    public static final double goalX = 320; //TODO Calculate actual goal x
+    public static final double visionTolerance = 10; //TODO Update to actual tolerance and establish units
+    public static double distanceBetweenVisionTargets = 5; //In inches //TODO Updated value
+
+    //Sensors
+    public static Gyro gyro;
+    public static Ultrasonic ultrasonic;
 }

@@ -3,15 +3,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 public class Gyro {
-    private static Gyro ourInstance = new Gyro();
-
-    public static Gyro getInstance() {
-        return ourInstance;
-    }
-
     private final ADXRS450_Gyro gyro;
 
-    private Gyro() {
+    public Gyro() {
         this.gyro = new ADXRS450_Gyro();
     }
 

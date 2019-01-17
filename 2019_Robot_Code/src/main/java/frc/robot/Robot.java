@@ -7,6 +7,8 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.subsystems.Gyro;
+import frc.robot.subsystems.Ultrasonic;
 import frc.robot.vision.VisionHandler;
 import frc.robot.vision.VisionLight;
 import frc.robot.utils.NetworkTableClient;
@@ -59,6 +61,10 @@ public class Robot extends TimedRobot {
 
         //Init Light
         Constants.lightRelay = new Relay(Constants.lightRelatPort);
+
+        //Init Sensors
+        Constants.gyro = new Gyro();
+        Constants.ultrasonic = new Ultrasonic();
     }
 
     @Override
@@ -72,10 +78,9 @@ public class Robot extends TimedRobot {
            // System.out.println("No targets found.");
         }
 
-        //Run Vision Light
+        //Run Vision Line Up
         if(Constants.driveJoystick.getRawButton(2) && released){
-            //VisionLight.getInstance().toggleLightState();
-            System.out.println("Light State Toggled");
+            System.out.println("Running Vision Line Up");
             released = false;
             VisionHandler.runLineUp(xEntry, driveTrain);
         }
