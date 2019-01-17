@@ -4,6 +4,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
+import frc.robot.utils.MathUtils;
 
 public class VisionHandler {
     private final PIDController pidController;
@@ -38,12 +39,15 @@ public class VisionHandler {
             }
 
             while(!linedUp){
-                System.out.println(linedUp);
-                if((xEntry.getDoubleArray(Constants.defaultDoubleArray)[0] + xEntry.getDoubleArray(Constants.defaultDoubleArray)[0])/2 > (640/2)){
-                    driveTrain.arcadeDrive(.35, 0);
-                }else{
-                    driveTrain.arcadeDrive(-.35, 0);
-                }
+                //TODO Check is camera exposure can be changed on the fly and implement
+                //TODO Improve efficiency
+                //TODO Need to convert pixels to inches
+                double xError = ((xEntry.getDoubleArray(Constants.defaultDoubleArray)[0] + xEntry.getDoubleArray(Constants.defaultDoubleArray)[1])/2) - Constants.goalX;
+                double neededGyroChange = MathUtils.calculateNeededGyroChange(xError, Constants.ultrasonic.getDistance());
+                Constants.gyro.zero();
+                //TODO Add PID to turn robot
+                xError = ((xEntry.getDoubleArray(Constants.defaultDoubleArray)[0] + xEntry.getDoubleArray(Constants.defaultDoubleArray)[1])/2) - Constants.goalX;
+
             }
             VisionLight.getInstance().toggleLightState();
             return;

@@ -4,15 +4,9 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import frc.robot.Constants;
 
 public class Ultrasonic {
-    private static Ultrasonic ourInstance = new Ultrasonic();
-
-    public static Ultrasonic getInstance() {
-        return ourInstance;
-    }
-
     private final AnalogInput ultrasonicSensor;
 
-    private Ultrasonic() {
+    public Ultrasonic() {
         ultrasonicSensor = new AnalogInput (Constants.ultrasonicPortConstant);
     }
 
