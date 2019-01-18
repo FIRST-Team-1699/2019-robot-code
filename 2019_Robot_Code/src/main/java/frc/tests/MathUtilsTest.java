@@ -24,4 +24,9 @@ class MathUtilsTest {
         error = -15.0;
         System.out.println("Error: " + error + " " + MathUtils.checkTolerance(error, tolerance));
     }
+
+    @org.junit.jupiter.api.Test
+    void pixelsToInches(){
+
+    }
 }
