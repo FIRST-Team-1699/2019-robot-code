@@ -51,8 +51,8 @@ public class Constants {
     public static final double goalX = 320; //TODO Calculate actual goal x
     public static final double visionTolerance = 10; //TODO Update to actual tolerance and establish units
     public static double distanceBetweenVisionTargets = 5; //In inches //TODO Updated value
-    public static final double cameraFieldOfView = 68.5; //TODO Double check value
-    public static final double targetWidth = 0; //TODO Update value
+    public static final double cameraFieldOfView = 44.48; //TODO Double check value
+    public static final double targetWidth = 4/12.0; //feet //TODO Update value
     public static final double imageWidth = 640; //TODO Double check value
 
     //Sensors

@@ -27,6 +27,6 @@ class MathUtilsTest {
 
     @org.junit.jupiter.api.Test
     void pixelsToInches(){
-
+        System.out.println(MathUtils.pixelsToInches(106.0));
     }
 }

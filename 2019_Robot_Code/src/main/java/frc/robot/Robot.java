@@ -15,6 +15,7 @@ import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.Ultrasonic;
 import frc.robot.vision.VisionHandler;
 import frc.robot.utils.NetworkTableClient;
+import frc.robot.vision.VisionLight;
 
 import static frc.robot.Constants.driveTrain;
 
@@ -85,7 +86,8 @@ public class Robot extends TimedRobot {
         if(Constants.driveJoystick.getRawButton(2) && released){
             System.out.println("Running Vision Line Up");
             released = false;
-            VisionHandler.runLineUp(xEntry, driveTrain);
+            //VisionHandler.runLineUp(xEntry, driveTrain);
+            VisionLight.getInstance().toggleLightState();
         }
         if(!Constants.driveJoystick.getRawButton(2)){
             released = true;

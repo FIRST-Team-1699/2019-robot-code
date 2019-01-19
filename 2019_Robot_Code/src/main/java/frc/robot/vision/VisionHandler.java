@@ -28,6 +28,7 @@ public class VisionHandler {
     public static void runLineUp(final NetworkTableEntry xEntry, final DifferentialDrive driveTrain){
         Thread thread = new Thread(() -> {
             boolean linedUp = false;
+            int itertions = 0;
 
             VisionLight.getInstance().toggleLightState();
 
@@ -38,16 +39,23 @@ public class VisionHandler {
                 e.printStackTrace();
             }
 
-            while(!linedUp){
+            while(!linedUp && itertions <= 4){ //TODO Changer iteration max
                 //TODO Check is camera exposure can be changed on the fly and implement
                 //TODO Improve efficiency
                 //TODO Need to convert pixels to inches
-                double xError = ((xEntry.getDoubleArray(Constants.defaultDoubleArray)[0] + xEntry.getDoubleArray(Constants.defaultDoubleArray)[1])/2) - Constants.goalX;
+                System.out.println("Vision iterations: " + itertions);
+                double xError = 0;
+                try{
+                    xError = ((xEntry.getDoubleArray(Constants.defaultDoubleArray)[0] + xEntry.getDoubleArray(Constants.defaultDoubleArray)[1])/2) - Constants.goalX;
+                }catch(ArrayIndexOutOfBoundsException e){
+                    System.out.println("Too few targets found");
+                    return;
+                }
                 double neededGyroChange = MathUtils.calculateNeededGyroChange(xError, Constants.ultrasonic.getDistance());
                 Constants.gyro.zero();
                 //TODO Add PID to turn robot
                 xError = ((xEntry.getDoubleArray(Constants.defaultDoubleArray)[0] + xEntry.getDoubleArray(Constants.defaultDoubleArray)[1])/2) - Constants.goalX;
-
+                itertions++;
             }
             VisionLight.getInstance().toggleLightState();
             return;
