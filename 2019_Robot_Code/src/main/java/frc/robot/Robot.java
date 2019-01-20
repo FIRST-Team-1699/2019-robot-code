@@ -73,25 +73,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        //Run Drive Base
-        driveTrain.arcadeDrive(Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getY()); //TODO Check correct axis
-
-        try{
-           //System.out.println(" X: " + xEntry.getDoubleArray(Constants.defaultDoubleArray)[0] + " " + xEntry.getDoubleArray(Constants.defaultDoubleArray)[1]);
-        }catch (ArrayIndexOutOfBoundsException e){
-           // System.out.println("No targets found.");
-        }
-
-        //Run Vision Line Up
-        if(Constants.driveJoystick.getRawButton(2) && released){
-            System.out.println("Running Vision Line Up");
-            released = false;
-            //VisionHandler.runLineUp(xEntry, driveTrain);
-            VisionLight.getInstance().toggleLightState();
-        }
-        if(!Constants.driveJoystick.getRawButton(2)){
-            released = true;
-        }
+        //Update Dashboard
+        updateDashboard();
     }
 
     @Override
@@ -106,7 +89,19 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+        //Run Drive Base
+        driveTrain.arcadeDrive(Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getY()); //TODO Check correct axis
 
+        //Run Vision Line Up
+        if(Constants.driveJoystick.getRawButton(2) && released){
+            System.out.println("Running Vision Line Up");
+            released = false;
+            //VisionHandler.runLineUp(xEntry, driveTrain);
+            VisionLight.getInstance().toggleLightState();
+        }
+        if(!Constants.driveJoystick.getRawButton(2)){
+            released = true;
+        }
     }
 
     @Override
@@ -120,5 +115,9 @@ public class Robot extends TimedRobot {
             Constants.elevator1.set(0);
             Constants.elevator2.set(0);
         }
+    }
+
+    private void updateDashboard(){
+        
     }
 }
