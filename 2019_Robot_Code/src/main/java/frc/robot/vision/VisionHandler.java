@@ -5,12 +5,15 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
 import frc.robot.utils.MathUtils;
+import frc.robot.utils.SynchronousPIDF;
 
 public class VisionHandler {
     private final PIDController pidController;
+    private static SynchronousPIDF rotatePID;
 
     public VisionHandler(){
         this.pidController = new PIDController(0, 0, 0, new PIDCamera("none"), null); //TODO Fix PIDOutput and K values
+        rotatePID = new SynchronousPIDF(0, 0, 0);
     }
 
     public void startPID(){
@@ -28,7 +31,7 @@ public class VisionHandler {
     public static void runLineUp(final NetworkTableEntry xEntry, final DifferentialDrive driveTrain){
         Thread thread = new Thread(() -> {
             boolean linedUp = false;
-            int itertions = 0;
+            int iterations = 0;
 
             VisionLight.getInstance().toggleLightState();
 
@@ -39,11 +42,11 @@ public class VisionHandler {
                 e.printStackTrace();
             }
 
-            while(!linedUp && itertions <= 4){ //TODO Changer iteration max
+            while(!linedUp && iterations <= 4){ //TODO Changer iteration max
                 //TODO Check is camera exposure can be changed on the fly and implement
                 //TODO Improve efficiency
                 //TODO Need to convert pixels to inches
-                System.out.println("Vision iterations: " + itertions);
+                System.out.println("Vision iterations: " + iterations);
                 double xError = 0;
                 try{
                     xError = ((xEntry.getDoubleArray(Constants.defaultDoubleArray)[0] + xEntry.getDoubleArray(Constants.defaultDoubleArray)[1])/2) - Constants.goalX;
@@ -54,8 +57,9 @@ public class VisionHandler {
                 double neededGyroChange = MathUtils.calculateNeededGyroChange(xError, Constants.ultrasonic.getDistance());
                 Constants.gyro.zero();
                 //TODO Add PID to turn robot
+                rotatePID.setSetpoint(0);
                 xError = ((xEntry.getDoubleArray(Constants.defaultDoubleArray)[0] + xEntry.getDoubleArray(Constants.defaultDoubleArray)[1])/2) - Constants.goalX;
-                itertions++;
+                iterations++;
             }
             VisionLight.getInstance().toggleLightState();
             return;
