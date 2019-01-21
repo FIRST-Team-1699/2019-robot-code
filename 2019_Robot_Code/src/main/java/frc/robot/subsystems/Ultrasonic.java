@@ -5,12 +5,13 @@ import frc.robot.Constants;
 
 public class Ultrasonic {
     private final AnalogInput ultrasonicSensor;
+    private final double scalar = 5.0/512.0;
 
     public Ultrasonic() {
         ultrasonicSensor = new AnalogInput (Constants.ultrasonicPortConstant);
     }
 
     public double getDistance(){
-        return ultrasonicSensor.getValue() / (2 * 2.54);
+        return ultrasonicSensor.getVoltage() / (scalar * 2.54);
     }
 }

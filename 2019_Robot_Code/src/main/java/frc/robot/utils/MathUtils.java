@@ -15,7 +15,6 @@ public class MathUtils {
     //https://wpilib.screenstepslive.com/s/currentCS/m/vision/l/288985-identifying-and-processing-the-targets
     public static double pixelsToInches(final double targetPixels){ //TODO Change var names
         double distance = (Constants.targetWidth * Constants.imageWidth)/(2 * targetPixels * Math.tan((Constants.cameraFieldOfView / 2)));
-        System.out.println(distance);
-        return distance; //* Math.tan(Math.toRadians(Constants.cameraFieldOfView / 2));
+        return Math.tan(Math.toRadians(Constants.cameraFieldOfView / 2));
     }
 }

@@ -234,7 +234,7 @@ public class SynchronousPIDF {
      * @param maximumInput
      *            the maximum value expected from the output
      */
-    public void setInputRange(double minimumInput, double maximumInput) {
+    public void setInputRange(double minimumInput, double maximumInput) throws BoundaryException {
         if (minimumInput > maximumInput) {
             throw new BoundaryException("Lower bound is greater than upper bound");
         }
@@ -251,7 +251,7 @@ public class SynchronousPIDF {
      * @param maximumOutput
      *            the maximum value to write to the output
      */
-    public void setOutputRange(double minimumOutput, double maximumOutput) {
+    public void setOutputRange(double minimumOutput, double maximumOutput) throws BoundaryException {
         if (minimumOutput > maximumOutput) {
             throw new BoundaryException("Lower bound is greater than upper bound");
         }

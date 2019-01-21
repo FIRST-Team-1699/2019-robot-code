@@ -15,7 +15,6 @@ import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.Ultrasonic;
 import frc.robot.vision.VisionHandler;
 import frc.robot.utils.NetworkTableClient;
-import frc.robot.vision.VisionLight;
 
 import static frc.robot.Constants.driveTrain;
 
@@ -68,6 +67,8 @@ public class Robot extends TimedRobot {
 
         //Init Sensors
         Constants.gyro = new Gyro();
+        Constants.gyro.calibrate();
+        Constants.gyro.zero();
         Constants.ultrasonic = new Ultrasonic();
     }
 
@@ -96,8 +97,8 @@ public class Robot extends TimedRobot {
         if(Constants.driveJoystick.getRawButton(2) && released){
             System.out.println("Running Vision Line Up");
             released = false;
-            //VisionHandler.runLineUp(xEntry, driveTrain);
-            VisionLight.getInstance().toggleLightState();
+            VisionHandler.runLineUp(xEntry, driveTrain);
+            //VisionLight.getInstance().toggleLightState();
         }
         if(!Constants.driveJoystick.getRawButton(2)){
             released = true;
@@ -118,6 +119,6 @@ public class Robot extends TimedRobot {
     }
 
     private void updateDashboard(){
-        
+
     }
 }
