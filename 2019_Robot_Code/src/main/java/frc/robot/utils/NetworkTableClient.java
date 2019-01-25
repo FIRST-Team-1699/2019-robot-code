@@ -13,6 +13,7 @@ import java.util.Map;
 * https://wpilib.screenstepslive.com/s/currentCS/m/75361/l/851714-creating-a-client-side-program
 */
 
+//TODO Update or remove
 public class NetworkTableClient implements Runnable{
 
     //Code for singleton

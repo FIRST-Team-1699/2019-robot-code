@@ -24,4 +24,5 @@ public class SuperStructureStateMachine {
 
     private double elevatorHeight = 0; //TODO Change to stow height
     private double clawAngle = 0; //TODO Change to stow claw angle
+
 }
