@@ -29,7 +29,7 @@ public class VisionHandler {
     }
 
     public static void runLineUp(final NetworkTableEntry xEntry, final DifferentialDrive driveTrain){
-        rotatePID = new SynchronousPIDF();
+        rotatePID = new SynchronousPIDF(0.15, 0, 0.2);
         Thread thread = new Thread(() -> {
             boolean linedUp = false;
             int iterations = 0;
@@ -57,10 +57,11 @@ public class VisionHandler {
                     double neededGyroChange = MathUtils.calculateNeededGyroChange(MathUtils.pixelsToInches(xError), Constants.ultrasonic.getDistance());
                     Constants.gyro.zero();
                     rotatePID.setSetpoint(neededGyroChange);
-                    System.out.println("Tolerance Check: " + MathUtils.checkTolerance(rotatePID.getSetpoint() - Constants.gyro.getAngle(), 5));
-                    System.out.println("Gyro: " + Constants.gyro.getAngle());
-                    while(!MathUtils.checkTolerance(rotatePID.getSetpoint() - Constants.gyro.getAngle(), 5)){
-                        System.out.println("Tolerance Check: " + MathUtils.checkTolerance(rotatePID.getSetpoint() - Constants.gyro.getAngle(), 5));
+                    System.out.println("Tolerance Check: " + MathUtils.checkTolerance(rotatePID.getSetpoint() - Constants.gyro.getAngle(), .5));
+                    System.out.println("Gyro: " + Constants.gyro.getAngle() + " Gyro Setpoint: " + neededGyroChange);
+
+                    while(!MathUtils.checkTolerance(rotatePID.getSetpoint() - Constants.gyro.getAngle(), 0.5)){
+                        System.out.println("Tolerance Check: " + MathUtils.checkTolerance(rotatePID.getSetpoint() - Constants.gyro.getAngle(), 0.5));
                         System.out.println("Gyro: " + Constants.gyro.getAngle());
                         System.out.println("xError: " + xError + " Distance: " + Constants.ultrasonic.getDistance() + " Gyro Change: " + neededGyroChange);
                         System.out.println("PID return " + rotatePID.calculate(Constants.gyro.getAngle(), System.nanoTime() - startTime));
