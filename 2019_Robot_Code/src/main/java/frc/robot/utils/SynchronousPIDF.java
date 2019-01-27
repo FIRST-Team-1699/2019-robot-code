@@ -80,12 +80,12 @@ public class SynchronousPIDF {
      *
      * @param input
      *            the input
-     * @param dt
+     * @param deltaTime
      *            time passed since previous call to calculate
      */
-    public double calculate(double input, double dt) {
-        if (dt < 1E-6)
-            dt = 1E-6;
+    public double calculate(double input, double deltaTime) {
+        if (deltaTime < 1E-6)
+            deltaTime = 1E-6;
         m_last_input = input;
         m_error = m_setpoint - input;
         if (m_continuous) {
@@ -99,7 +99,7 @@ public class SynchronousPIDF {
         }
 
         if ((m_error * m_P < m_maximumOutput) && (m_error * m_P > m_minimumOutput)) {
-            m_totalError += m_error * dt;
+            m_totalError += m_error * deltaTime;
         } else {
             m_totalError = 0;
         }
@@ -107,7 +107,7 @@ public class SynchronousPIDF {
         // Don't blow away m_error so as to not break derivative
         double proportionalError = Math.abs(m_error) < m_deadband ? 0 : m_error;
 
-        m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError) / dt
+        m_result = (m_P * proportionalError + m_I * m_totalError + m_D * (m_error - m_prevError) / deltaTime
                 + m_F * m_setpoint);
         m_prevError = m_error;
 

@@ -5,16 +5,13 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.Ultrasonic;
 import frc.robot.vision.VisionHandler;
 import frc.robot.utils.NetworkTableClient;
+import frc.robot.vision.VisionLight;
 
 import static frc.robot.Constants.driveTrain;
 
@@ -70,6 +67,7 @@ public class Robot extends TimedRobot {
         Constants.gyro.calibrate();
         Constants.gyro.zero();
         Constants.ultrasonic = new Ultrasonic();
+        
     }
 
     @Override
@@ -97,7 +95,7 @@ public class Robot extends TimedRobot {
         if(Constants.driveJoystick.getRawButton(2) && released){
             System.out.println("Running Vision Line Up");
             released = false;
-            VisionHandler.runLineUp(xEntry, driveTrain);
+            VisionHandler.runLineUp(xEntry, driveTrain, true);
             //VisionLight.getInstance().toggleLightState();
         }
         if(!Constants.driveJoystick.getRawButton(2)){
@@ -109,8 +107,8 @@ public class Robot extends TimedRobot {
     public void testPeriodic() {
         //Elevator Test
         System.out.println(Constants.driveJoystick.getThrottle() + " " + Constants.driveJoystick.getTrigger());
-        if(Constants.driveJoystick.getTrigger()){
-            Constants.elevator1.set(Constants.driveJoystick.getThrottle());
+        if(true){//Constants.driveJoystick.getTrigger()){
+            Constants.elevator1.set(-Constants.driveJoystick.getThrottle());
             Constants.elevator2.set(Constants.driveJoystick.getThrottle());
         }else{
             Constants.elevator1.set(0);
