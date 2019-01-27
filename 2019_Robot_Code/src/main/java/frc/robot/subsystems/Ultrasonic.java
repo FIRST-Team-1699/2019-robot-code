@@ -5,7 +5,7 @@ import frc.robot.Constants;
 
 public class Ultrasonic {
     private final AnalogInput ultrasonicSensor;
-    private final double scalar = 5.0/512.0;
+    private final double scalar = 4.84/512.0;
 
     public Ultrasonic() {
         ultrasonicSensor = new AnalogInput (Constants.ultrasonicPortConstant);

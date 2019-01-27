@@ -36,9 +36,6 @@ public class Constants {
     //Team Constants
     public static final String teamNumber = "1699";
 
-    //PID Controller Goal Constants
-    public static final double visionGoalConstant = 0; //TODO Change if needed
-
     //Ultrasonic Sensor Constant
     public static final int ultrasonicPortConstant = 0;
 
@@ -49,7 +46,7 @@ public class Constants {
     public static Relay lightRelay;
     public static final int lightRelatPort = 0;
     public static final double goalX = 320; //TODO Calculate actual goal x
-    public static final double visionTolerance = 10; //TODO Update to actual tolerance and establish units
+    public static final double visionTolerance = .5; //TODO Update to actual tolerance and establish units
     public static double distanceBetweenVisionTargets = 5; //In inches //TODO Updated value
     public static final double cameraFieldOfView = 44.48; //TODO Double check value
     public static final double targetWidth = 4/12.0; //feet //TODO Update value

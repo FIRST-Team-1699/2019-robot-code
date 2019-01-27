@@ -117,7 +117,7 @@ public class SynchronousPIDF {
             m_result = m_minimumOutput;
         }
         
-        System.out.println("P: " + m_error + " I: " + m_totalError);
+        //System.out.println("P: " + m_error + " I: " + m_totalError);
         return m_result;
     }
 

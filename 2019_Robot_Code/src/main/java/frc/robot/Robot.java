@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
         Constants.gyro.calibrate();
         Constants.gyro.zero();
         Constants.ultrasonic = new Ultrasonic();
-        
+
     }
 
     @Override
@@ -90,6 +90,8 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         //Run Drive Base
         driveTrain.arcadeDrive(Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getY()); //TODO Check correct axis
+
+        //System.out.println(Constants.ultrasonic.getDistance());
 
         //Run Vision Line Up
         if(Constants.driveJoystick.getRawButton(2) && released){

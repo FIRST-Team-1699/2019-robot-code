@@ -6,7 +6,12 @@ public class MathUtils {
 
     public static double calculateNeededGyroChange(final double visionError, final double distance){
         System.out.println("DISTANCE CALC --------- Vision Error: " + visionError + " Distance: " + distance);
-        return (Math.atan(Math.toDegrees(Math.abs(visionError)/distance))) * (visionError / Math.abs(visionError)); //TODO Write test
+        double divide = Math.abs(visionError)/distance;
+        double toDeg = divide;
+        double multiplier = (visionError / Math.abs(visionError));
+        double output = Math.toDegrees(Math.asin(toDeg) * multiplier); //TODO Write test
+        //System.out.println("Gyro Change Calc: " + output + " Divide: " + divide + " To Degrees: " + toDeg + " Multiplier: " + multiplier);
+        return output;
     }
 
     public static boolean checkTolerance(final double error, final double tolerance) {
