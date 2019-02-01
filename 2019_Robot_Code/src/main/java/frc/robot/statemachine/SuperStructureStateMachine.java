@@ -10,13 +10,14 @@ public class SuperStructureStateMachine {
         SwitchToManual
     }
     //TODO make states for each position not just a generic position
-    public enum SystemState{ 
+    public enum SystemState{
         HoldPosition,
         MoveingToPosition,
         Manual
     }
 
-    private SystemState currectSystemState = SystemState.HoldPosition;
+    private SystemState currentSystemState = SystemState.HoldPosition;
+    private String command = new String("Place Holder"); //TODO Change to actual command
     private String currentCommandState = new String("Place Holder"); //TODO Change to actual command
     private String desiredCommandState = new String("Place Holder"); //TODO Change to actual command
 
@@ -25,4 +26,60 @@ public class SuperStructureStateMachine {
     private double elevatorHeight = 0; //TODO Change to stow height
     private double clawAngle = 0; //TODO Change to stow claw angle
 
+    private double openLoopPower = 0.0;
+    private double maxHeight = 0.0; //TODO Change
+
+    public synchronized void resetManual(){
+        openLoopPower = 0.0;
+    }
+
+    public synchronized void setMaxHeight(final double height){
+        maxHeight = height;
+    }
+
+    public synchronized void setOpenLoopPower(final double power){
+        openLoopPower = power;
+    }
+
+    public synchronized void setElevatorHeight(final double inches){
+        elevatorHeight = inches;
+    }
+
+    public synchronized double getElevatorHeight(){
+        return elevatorHeight;
+    }
+
+    public synchronized void setClawAngle(final double angle){
+        clawAngle = angle;
+    }
+
+    public synchronized double getClawAngle(){
+        return clawAngle;
+    }
+
+    public synchronized void jogElevator(final double relativeInches){
+        elevatorHeight += relativeInches;
+        elevatorHeight = Math.min(elevatorHeight, maxHeight);
+        elevatorHeight = Math.max(elevatorHeight, 0); //TODO Change to max height
+    }
+
+    public synchronized void jogWrite(final double relativeDegrees){
+        clawAngle += relativeDegrees;
+        clawAngle = Math.min(clawAngle, 0); //TODO Change to min angle
+        clawAngle = Math.max(clawAngle, 0); //TODO Change to max angle
+    }
+
+    public synchronized boolean scoringPosChanged(){
+        return false; //TODO Implement
+    }
+
+    public synchronized SystemState getSystemState(){
+        return currentSystemState;
+    }
+
+    public synchronized void setUpwardSubcommandEnabled(boolean enabled){
+        //TODO Implement
+    }
+
+    //TODO Add update method
 }

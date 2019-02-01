@@ -24,4 +24,9 @@ public class SuperStructureState {
     public SuperStructureState(){
         this(0, 0, false); //TODO Change to mins
     }
+
+    //TODO Static?
+    public boolean isInRange(final SuperStructureState state, final double heightThreshold, double wristThreshold){
+        return false; //TODO Implement
+    }
 }
