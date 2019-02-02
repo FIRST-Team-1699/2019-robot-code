@@ -3,6 +3,7 @@ package frc.robot.vision;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
 import frc.robot.utils.MathUtils;
@@ -59,7 +60,7 @@ public class VisionHandler {
         Thread thread = new Thread(() -> {
             boolean linedUp = false;
             int iterations = 0;
-
+            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
             VisionLight.getInstance().toggleLightState();
 
             //Sleep to let vision init
@@ -69,7 +70,7 @@ public class VisionHandler {
                 e.printStackTrace();
             }
 
-            while(!linedUp && iterations <= 0){ //TODO Changer iteration max
+            while(!linedUp && iterations <= 0 && !Thread.interrupted()){ //TODO Changer iteration max
                 //TODO Check is camera exposure can be changed on the fly and implement
                 //TODO Improve efficiency
                 //TODO Need to convert pixels to inches
@@ -91,8 +92,9 @@ public class VisionHandler {
 
                     System.out.println("Gyro: " + Constants.gyro.getAngle() + " Gyro Setpoint: " + neededGyroChange);
                     int pidIterations = 0;
-                    while(!MathUtils.checkTolerance(Constants.gyro.getAngle() - rotatePID.getSetpoint(), .5) && pidIterations < 3){
+                    while(!MathUtils.checkTolerance(Constants.gyro.getAngle() - rotatePID.getSetpoint(), .5) && pidIterations < 3 && !Thread.interrupted()){
                         startTime = System.nanoTime();
+                        
                         Constants.driveTrain.arcadeDrive(-rotatePID.calculate(Constants.gyro.getAngle(), .1), 0);
                         //pidIterations++; //TODO Uncomment/add timeout
                         Thread.sleep(100);
