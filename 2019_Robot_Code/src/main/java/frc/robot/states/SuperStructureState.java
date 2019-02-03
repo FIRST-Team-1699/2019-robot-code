@@ -1,5 +1,7 @@
 package frc.robot.states;
 
+import frc.robot.utils.Util;
+
 //TODO Give credit
 public class SuperStructureState {
 
@@ -28,11 +30,18 @@ public class SuperStructureState {
     }
 
     public SuperStructureState(){
-        this(0, 0, false); //TODO Change to mins
+        this(0, 0, false); //TODO Change to constants
     }
 
     public boolean inIllegalZone(boolean allowSmallErrors){
-        return false; //TODO Implement
+        double allowableWristAngleError = allowSmallErrors ? 5.5 : 0; //TODO Change error allowable error
+        double allowableElevatorError = allowSmallErrors ? 1 : 0; //TODO Change allowable
+
+        if(height >= 0 + allowableElevatorError && angle < 0 - allowableWristAngleError){ //TODO Change constants
+            return true;
+        }
+
+        return false;
     }
 
     public boolean inIllegalZone(){
@@ -40,11 +49,11 @@ public class SuperStructureState {
     }
 
     public boolean inIllegalJawZone(){
-        return false;
+        return angle < 0 && !clawOpen;
     }
 
-    public boolean isInRange(final SuperStructureState state, final double heightThreshold, double wristThreshold){
-        return false; //TODO Implement
+    public boolean isInRange(final SuperStructureState otherState, final double heightThreshold, double wristThreshold){
+        return Util.epsilonEquals(otherState.height, height, heightThreshold) && Util.epsilonEquals(otherState.angle, angle, wristThreshold);
     }
 
     @Override

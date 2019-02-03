@@ -3,7 +3,7 @@ package frc.robot.loops;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.utils.CrashTrackingRunnable;
+import frc.robot.utils.crashtracking.CrashTrackingRunnable;
 
 import java.util.ArrayList;
 import java.util.List;

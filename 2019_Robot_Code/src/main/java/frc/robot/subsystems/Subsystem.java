@@ -8,15 +8,15 @@ public abstract class Subsystem {
 
     }
 
-    public void readPeriodicInput(){
+    public void readPeriodicInputs(){
 
     }
 
-    public void writePeriodicOutput(){
+    public void writePeriodicOutputs(){
 
     }
 
-    public abstract void checkSystem();
+    public abstract boolean checkSystem();
 
     public abstract void outputTelemetry();
 
@@ -26,7 +26,7 @@ public abstract class Subsystem {
 
     }
 
-    public void registerEnabledLooper(ILooper enabledLooper){ //TODO Change to looper
+    public void registerEnabledLoops(ILooper enabledLooper){
 
     }
 }

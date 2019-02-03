@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.robot.utils.crashtracking;
 
 import java.io.FileWriter;
 import java.io.IOException;

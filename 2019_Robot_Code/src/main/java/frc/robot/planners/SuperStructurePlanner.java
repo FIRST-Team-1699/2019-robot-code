@@ -37,20 +37,41 @@ public class SuperStructurePlanner {
     }
 
     class WaitForElevatorSafeSubcommand extends SubCommand{
-        public WaitForElevatorSafeSubcommand(SuperStructureState endState) {
+        public WaitForElevatorSafeSubcommand(SuperStructureState endState, SuperStructureState currentState) {
             super(endState);
+            if(endState.height >= currentState.height){
+                heightThreshold = heightThreshold + Math.max(0.0, endState.height - 0); //TODO Change constants
+            }else{
+                heightThreshold = heightThreshold + Math.max(0.0, 0 - endState.height); //TODO Change constants
+            }
+        }
+
+        @Override
+        public boolean isFinished(SuperStructureState currentState){
+            return endState.isInRange(currentState, heightThreshold, Double.POSITIVE_INFINITY);
         }
     }
 
     class WaitForElevatorApproachingSubcommand extends SubCommand{
         public WaitForElevatorApproachingSubcommand(SuperStructureState endState) {
             super(endState);
+            heightThreshold = 0; //TODO Change constant
+        }
+
+        @Override
+        public boolean isFinished(SuperStructureState currentState){
+            return endState.isInRange(currentState, heightThreshold, Double.POSITIVE_INFINITY);
         }
     }
 
     class WaitForFinalSetpointSubcommand extends SubCommand{
         public WaitForFinalSetpointSubcommand(SuperStructureState endState) {
             super(endState);
+        }
+
+        @Override
+        public boolean isFinished(SuperStructureState currentState){
+            return currentState.elevatorSentLastTrajectory && currentState.wristSentLastTrajectory;
         }
     }
 

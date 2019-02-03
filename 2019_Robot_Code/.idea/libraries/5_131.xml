@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="5.131">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../../../../../../Public/frc2019/maven/com/ctre/phoenix/api-java/5.13.0" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$PROJECT_DIR$/../../../../../../Public/frc2019/maven/com/ctre/phoenix/api-java/5.13.0" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/../../../../../../Public/frc2019/maven/com/ctre/phoenix/api-java/5.13.0" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/../../../../../../Public/frc2019/maven/com/ctre/phoenix/api-java/5.13.0" recursive="false" type="SOURCES" />
+  </library>
+</component>

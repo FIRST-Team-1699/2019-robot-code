@@ -1,4 +1,4 @@
-package frc.robot.utils;
+package frc.robot.utils.crashtracking;
 
 public abstract class CrashTrackingRunnable implements Runnable {
 
