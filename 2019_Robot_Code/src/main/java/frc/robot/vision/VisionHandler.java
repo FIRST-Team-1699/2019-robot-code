@@ -1,5 +1,10 @@
 package frc.robot.vision;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import com.sun.jdi.request.ThreadDeathRequest;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
@@ -11,8 +16,8 @@ import frc.robot.utils.SynchronousPIDF;
 
 public class VisionHandler {
     private static SynchronousPIDF rotatePID;
-
-    public static void runLineUp(final NetworkTableEntry xEntry, final DifferentialDrive drivetrain, boolean test){
+    private static boolean isCentering = false;
+    public static synchronized void runLineUp(final NetworkTableEntry xEntry, final DifferentialDrive drivetrain, boolean test){
         rotatePID = new SynchronousPIDF(0.025, 0.002, 0.08);
 
         Thread threadTurn = new Thread(() -> {
@@ -56,8 +61,12 @@ public class VisionHandler {
     }
 
     public static void runLineUp(final NetworkTableEntry xEntry, final DifferentialDrive driveTrain){
-        rotatePID = new SynchronousPIDF(0.3, 0.1, 0.4);
+        rotatePID = new SynchronousPIDF(0.4, 0.25, 0.0);
+        
         Thread thread = new Thread(() -> {
+            //gl 2/2/19
+            
+            boolean killThread = false;
             boolean linedUp = false;
             int iterations = 0;
             Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
@@ -69,8 +78,8 @@ public class VisionHandler {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
-            while(!linedUp && iterations <= 0 && !Thread.interrupted()){ //TODO Changer iteration max
+            //gl 2/2/19
+            while(!linedUp && iterations <= 0 && !Thread.interrupted() && !killThread){ //TODO Changer iteration max
                 //TODO Check is camera exposure can be changed on the fly and implement
                 //TODO Improve efficiency
                 //TODO Need to convert pixels to inches
@@ -82,7 +91,7 @@ public class VisionHandler {
                 double xError ;
                 try{
                     xError = ((xEntry.getDoubleArray(Constants.defaultDoubleArray)[0] + xEntry.getDoubleArray(Constants.defaultDoubleArray)[1])/2) - Constants.goalX;
-                    double neededGyroChange = MathUtils.calculateNeededGyroChange(MathUtils.pixelsToInches(xError) * 12, Constants.ultrasonic.getDistance());
+                    double neededGyroChange = MathUtils.calculateNeededGyroChange(MathUtils.pixelsToInches(xError) * 12, Constants.ultrasonic.getDistance() + 16); //adding 16 inches to distance to account for offset of sonic sensor to gyro
                     if(Double.isNaN(neededGyroChange)){
                         VisionLight.getInstance().toggleLightState();
                         return;
@@ -92,11 +101,14 @@ public class VisionHandler {
 
                     System.out.println("Gyro: " + Constants.gyro.getAngle() + " Gyro Setpoint: " + neededGyroChange);
                     int pidIterations = 0;
-                    while(!MathUtils.checkTolerance(Constants.gyro.getAngle() - rotatePID.getSetpoint(), .5) && pidIterations < 3 && !Thread.interrupted()){
+                    double motorSpeed;
+                    while(!MathUtils.checkTolerance(Constants.gyro.getAngle() - rotatePID.getSetpoint(), .5) && pidIterations < 3 && !Thread.interrupted() && DriverStation.getInstance().isEnabled()){
                         startTime = System.nanoTime();
-                        
-                        Constants.driveTrain.arcadeDrive(-rotatePID.calculate(Constants.gyro.getAngle(), .1), 0);
+                        motorSpeed = -rotatePID.calculate(Constants.gyro.getAngle(), .01);
+                        Constants.driveTrain.arcadeDrive(motorSpeed, 0);
                         //pidIterations++; //TODO Uncomment/add timeout
+                        System.out.println("Gyro: " + Constants.gyro.getAngle() + " Gyro Setpoint: " + neededGyroChange + " motor value: " + motorSpeed);
+
                         Thread.sleep(100);
 
                         if(Constants.driveJoystick.getRawButton(2)){
@@ -104,6 +116,8 @@ public class VisionHandler {
                             return;
                         }
                     }
+                    System.out.println("Final Gyro: " + Constants.gyro.getAngle() + " Gyro Setpoint: " + neededGyroChange);
+
                     iterations++;
 
                     if(Constants.driveJoystick.getRawButton(2)){
@@ -116,15 +130,25 @@ public class VisionHandler {
                     }
                 }catch(ArrayIndexOutOfBoundsException e){
                     System.out.println("Too few targets found");
+                    VisionLight.getInstance().toggleLightState();
                     return;
                 }catch(InterruptedException e){
                     e.printStackTrace();
+                //gl 2/2/19
+                }finally{
+                    killThread = true;
+                    isCentering = false;
                 }
             }
             VisionLight.getInstance().toggleLightState();
+            isCentering=false;
             return;
         });
-        thread.start();
+        if(!isCentering){
+            isCentering = true;
+            thread.start();
+
+        }
     }
 
 }

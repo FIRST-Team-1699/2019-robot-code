@@ -90,14 +90,14 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         //Run Drive Base
         driveTrain.arcadeDrive(Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getY()); //TODO Check correct axis
-
+        //System.out.println(Constants.driveJoystick.getX() * -1);
         //System.out.println(Constants.ultrasonic.getDistance());
 
         //Run Vision Line Up
         if(Constants.driveJoystick.getRawButton(2) && released){
             System.out.println("Running Vision Line Up");
             released = false;
-            VisionHandler.runLineUp(xEntry, driveTrain, true);
+            VisionHandler.runLineUp(xEntry, driveTrain);
             //VisionLight.getInstance().toggleLightState();
         }
         if(!Constants.driveJoystick.getRawButton(2)){
