@@ -1,7 +1,8 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.ParamEnum;
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Talon;
 import frc.robot.utils.talon.TalonSRXFactory;
@@ -17,7 +18,7 @@ public class Elevator extends Subsystem {
     private static Elevator instance = null;
     private Intake intake = Intake.getInstance();
     private final TalonSRX master, talon2, talon3, talon4;
-    private PeriodicIO periodicIO = new PeriodicIO();
+    private PeriodicIO periodicIO = PeriodicIO();
     private ElevatorControlState elevatorControlState = ElevatorControlState.OpenLoop;
 
     private boolean hasBeenZeroed = false;
@@ -48,50 +49,7 @@ public class Elevator extends Subsystem {
         TalonSRXUtil.checkError(master.configAllowableClosedloopError(positionFrontrolSlot, 0, 0), "Could not set elevator deadband: ");
         TalonSRXUtil.checkError(master.configClosedloopRamp(0, 0), "Could not set elevator voltage ramp rate: ");
         TalonSRXUtil.checkError(master.configOpenloopRamp(0, 0), "Could not set elevator voltage ramp rate: ");
-        TalonSRXUtil.checkError(master.configContinuousCurrentLimit(20, 0), "Could not set elevator continuous current limit.");
-        TalonSRXUtil.checkError(master.configPeakCurrentLimit(35, 0), "Could not set elevator peak current limit.");
-        TalonSRXUtil.checkError(master.configPeakCurrentDuration(200, 0), "Could not set elevator peak current duration.");
-        master.enableCurrentLimit(true);
-
-        master.configSetParameter(ParamEnum.eClearPositionOnLimitF, 0, 0, 0, 0);
-        master.configSetParameter(ParamEnum.eClearPositionOnLimitR, 0, 0, 0, 0);
-
-        master.selectProfileSlot(0, 0);
-
-        master.overrideLimitSwitchesEnable(true);
-        master.overrideSoftLimitsEnable(false);
-
-        master.enableVoltageCompensation(true);
-
-        master.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 10, 20);
-        master.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 20);
-
-        master.setInverted(true); //TODO Check
-        master.setSensorPhase(true);
-
-        //TODO Add slaves
-        talon2 = new TalonSRX(0);
-        talon3 = new TalonSRX(0);
-        talon4 = new TalonSRX(0);
-
-        master.set(ControlMode.PercentOutput, 0);
-        setNeutralMode(NeutralMode.Brake);
-    }
-
-    public synchronized static Elevator getInstance() {
-        if(instance == null){
-            instance = new Elevator();
-        }
-        return instance;
-    }
-
-    public synchronized void setOpenLoop(double percentage){
-        elevatorControlState = ElevatorControlState.OpenLoop;
-        periodicIO.demand = percentage;
-    }
-
-    public synchronized void setMotionMagicPosition(double positionInchesOffGround) {
-
+        TalonSRXUtil.checkError(master.configContinuousCurrentLimit(20, 0), "Could not set wrist continuous current limit.");
     }
 
     @Override
@@ -107,31 +65,5 @@ public class Elevator extends Subsystem {
     @Override
     public void stop() {
 
-    }
-
-    private void setNeutralMode(NeutralMode neutralMode){
-        //TODO Implement
-    }
-
-    private enum ElevatorControlState {
-        OpenLoop,
-        MotionMagic,
-        PositionPID
-    }
-
-    public static class PeriodicIO {
-        //Inputs
-        public int positionTicks;
-        public int velocityTicksPer100MS;
-        public double activeTrajectoryAccelG;
-        public int activeTrajectoryVelocity;
-        public int activeTrajectoruPosition;
-        public double outputPercent;
-        public boolean limitSwitch;
-        public double feedForward;
-        public double t;
-
-        //Outputs
-        public double demand;
     }
 }
