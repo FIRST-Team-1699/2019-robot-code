@@ -3,10 +3,12 @@ package frc.robot.statemachine;
 import frc.robot.states.IntakeState;
 import frc.robot.utils.TimeDelayedBoolean;
 
+//TODO Change to account for hatch
 public class IntakeStateMachine {
     public static final double actuationTime = 0.0;
     public static final double exchangeShootSetpoint = 1.0;
     public static final double shootBallSetpoint = 0.5;
+    private static final double intakeBallSetpoint = 0.5;
     //TODO Add more speed setpoints
     public static final double holdSetpoint = 0.0;
     public static final double lostGamePieceTime = 0.25;
@@ -85,5 +87,64 @@ public class IntakeStateMachine {
         return commandedState;
     }
 
-    //TODO Line 95
+    private synchronized SystemState handleOpenLoopTransitions(WantedAction wantedAction, IntakeState currentState){
+        switch(wantedAction){
+            case WantGamePiece:
+                lastSeenGamePieceTime = Double.NaN;
+                return SystemState.KeepingGamePiece;
+            default:
+                return SystemState.OpenLoop;
+        }
+    }
+
+    private synchronized void getOpenLoopCommandedState(IntakeState currentState, IntakeState commandedState){
+        commandedState.setPower(wantedPower);
+        if(mustStayClosed(currentState)){
+            commandedState.jawState = IntakeState.JawState.Closed;
+        }else{
+            commandedState.jawState = wantedJawState;
+        }
+        //TODO Add LEDs?
+    }
+
+    private synchronized void getKeepingGamePieceCommandedState(IntakeState currentState, IntakeState commandedState, double timestamp){
+        commandedState.setPower(intakeBallSetpoint);
+        boolean close = (currentState.seesBall() && wantedJawState != IntakeState.JawState.Open) || mustStayClosed(currentState);
+
+        boolean currentlySeeBall = currentState.seesBall();
+        boolean resetSeenBallTime = true;
+        if(!currentlySeeBall && !Double.isNaN(lastSeenGamePieceTime) && (timestamp - lastSeenGamePieceTime < lostGamePieceTime)) {
+            currentlySeeBall = true;
+            close = (wantedJawState != IntakeState.JawState.Open) || mustStayClosed(currentState);
+            resetSeenBallTime = false;
+        }
+
+        boolean seenBall = lastSeenGamePiece.update(currentlySeeBall, lostGamePieceTime);
+
+        if(currentlySeeBall) {
+            if(!seenBall) {
+                commandedState.setPower(intakeBallSetpoint);
+            }else{
+                commandedState.setPower(holdSetpoint);
+            }
+            commandedState.jawState = close ? IntakeState.JawState.Closed : IntakeState.JawState.Open;
+
+            if(resetSeenBallTime){
+                lastSeenGamePieceTime = timestamp;
+            }
+        }else{
+            commandedState.setPower(intakeBallSetpoint);
+            if(forceClose) {
+                commandedState.jawState = IntakeState.JawState.Closed;
+            }else if(!Double.isNaN(lastSeenGamePieceTime) && (timestamp - lastSeenGamePieceTime < unclampWaitingTime)){
+                commandedState.jawState = IntakeState.JawState.Closed;
+            }else{
+                commandedState.jawState = mustStayClosed(currentState) ? IntakeState.JawState.Closed : IntakeState.JawState.Open;
+            }
+        }
+    }
+
+    private boolean mustStayClosed(IntakeState state) {
+        return state.wristSetpoint < 0 || state.wristAngle < 0; //TODO Change constants
+    }
 }
