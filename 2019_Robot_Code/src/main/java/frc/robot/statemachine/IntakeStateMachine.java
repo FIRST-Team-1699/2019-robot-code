@@ -16,6 +16,8 @@ public class IntakeStateMachine {
 
     public enum WantedAction {
         WantManual,
+        WantBall,
+        WantHatch, //TODO Implement want ball/hatch
         WantGamePiece
     }
 
