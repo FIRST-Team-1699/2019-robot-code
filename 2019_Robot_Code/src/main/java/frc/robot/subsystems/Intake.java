@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.loops.ILooper;
 import frc.robot.loops.Loop;
+import frc.robot.statemachine.IntakeStateMachine;
 import frc.robot.states.IntakeState;
 import frc.robot.utils.talon.TalonSRXChecker;
 import frc.robot.utils.talon.TalonSRXFactory;
