@@ -1,7 +1,7 @@
 package frc.robot.utils.sensors;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
 
 public class Ultrasonic {
     private final AnalogInput ultrasonicSensor;

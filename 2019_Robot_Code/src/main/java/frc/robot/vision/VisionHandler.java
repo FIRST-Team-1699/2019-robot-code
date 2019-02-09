@@ -1,16 +1,11 @@
 package frc.robot.vision;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import com.sun.jdi.request.ThreadDeathRequest;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
 import frc.robot.utils.MathUtils;
 import frc.robot.utils.SynchronousPIDF;
 

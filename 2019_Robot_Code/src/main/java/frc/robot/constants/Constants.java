@@ -1,37 +1,15 @@
-package frc.robot;
+package frc.robot.constants;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import frc.robot.utils.sensors.Gyro;
 import frc.robot.utils.sensors.Ultrasonic;
 
 public class Constants {
 
-    //Drive Train Constants
-    public static VictorSP portMaster;
-    public static VictorSP portSlave;
-    public static VictorSP starboardMaster;
-    public static VictorSP starboardSlave;
-
-    public static final int portMasterPort = 4;
-    public static final int portSlavePort = 5;
-    public static final int starboardMasterPort = 0;
-    public static final int starboardSlavePort = 1;
-
-    public static DifferentialDrive driveTrain;
-
-    //Elevator Constants
-    public static VictorSP elevator1;
-    public static VictorSP elevator2;
-
     //Accelerometer
     public static Accelerometer accel;
-
-    public static final int elevator1Port = 2;
-    public static final int elevator2Port = 3;
 
     //Joystick Constants
     public static final int joystickPort = 0;
@@ -60,4 +38,7 @@ public class Constants {
     //Sensors
     public static Gyro gyro;
     public static Ultrasonic ultrasonic;
+
+    //CAN Constants
+    public static final int longCANTimeoutMs = 0; //TODO Change constant
 }

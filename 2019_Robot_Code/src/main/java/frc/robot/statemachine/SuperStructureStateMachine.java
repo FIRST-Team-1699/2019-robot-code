@@ -3,6 +3,8 @@ package frc.robot.statemachine;
 //TODO Give proper credit
 //Code inspiration from https://github.com/Team254/FRC-2018-Public/blob/master/src/main/java/com/team254/frc2018/statemachines/SuperstructureStateMachine.java
 
+import frc.robot.states.SuperstructureCommand;
+
 public class SuperStructureStateMachine {
     public enum Action{
         Idle,
@@ -17,9 +19,9 @@ public class SuperStructureStateMachine {
     }
 
     private SystemState currentSystemState = SystemState.HoldPosition;
-    private String command = new String("Place Holder"); //TODO Change to actual command
-    private String currentCommandState = new String("Place Holder"); //TODO Change to actual command
-    private String desiredCommandState = new String("Place Holder"); //TODO Change to actual command
+    private SuperstructureCommand command = new SuperstructureCommand();
+    private SuperstructureCommand currentCommandState = new SuperstructureCommand();
+    private SuperstructureCommand desiredCommandState = new SuperstructureCommand();
 
     private String motionPlan = new String ("Place Holder"); //TODO Change to actual motion plan
 

@@ -5,14 +5,20 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.constants.Constants;
+import frc.robot.constants.DriveBaseConstants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.utils.sensors.Gyro;
 import frc.robot.utils.sensors.Ultrasonic;
 import frc.robot.vision.VisionHandler;
 import frc.robot.utils.NetworkTableClient;
-
-import static frc.robot.Constants.driveTrain;
 
 public class Robot extends TimedRobot {
 
@@ -27,20 +33,20 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         //Motor Controller Definition
-        Constants.portMaster = new VictorSP(Constants.portMasterPort);
-        Constants.portSlave = new VictorSP(Constants.portSlavePort);
-        Constants.portMaster.setInverted(true);
-        Constants.portSlave.setInverted(true);
-        Constants.starboardMaster = new VictorSP(Constants.starboardMasterPort);
-        Constants.starboardSlave = new VictorSP(Constants.starboardSlavePort);
-        SpeedControllerGroup portMotorGroup = new SpeedControllerGroup(Constants.portMaster, Constants.portSlave);
-        SpeedControllerGroup starboardMotorGroup = new SpeedControllerGroup(Constants.starboardMaster, Constants.starboardSlave);
-        driveTrain = new DifferentialDrive(portMotorGroup, starboardMotorGroup);
+        DriveBaseConstants.portMaster = new VictorSP(DriveBaseConstants.portMasterPort);
+        DriveBaseConstants.portSlave = new VictorSP(DriveBaseConstants.portSlavePort);
+        DriveBaseConstants.portMaster.setInverted(true);
+        DriveBaseConstants.portSlave.setInverted(true);
+        DriveBaseConstants.starboardMaster = new VictorSP(DriveBaseConstants.starboardMasterPort);
+        DriveBaseConstants.starboardSlave = new VictorSP(DriveBaseConstants.starboardSlavePort);
+        SpeedControllerGroup portMotorGroup = new SpeedControllerGroup(DriveBaseConstants.portMaster, DriveBaseConstants.portSlave);
+        SpeedControllerGroup starboardMotorGroup = new SpeedControllerGroup(DriveBaseConstants.starboardMaster, DriveBaseConstants.starboardSlave);
+        DriveBaseConstants.driveTrain = new DifferentialDrive(portMotorGroup, starboardMotorGroup);
 
         //Elevator Test Inits
-        Constants.elevator1 = new VictorSP(Constants.elevator1Port);
-        Constants.elevator2 = new VictorSP(Constants.elevator2Port);
-        Constants.elevator2.setInverted(true);
+        ElevatorConstants.elevator1 = new VictorSP(ElevatorConstants.elevator1Port);
+        ElevatorConstants.elevator2 = new VictorSP(ElevatorConstants.elevator2Port);
+        ElevatorConstants.elevator2.setInverted(true); //TODO Change
 
         //Network table variables
         nTableClient = NetworkTableClient.getInstance(); //TODO Implement or remove
@@ -91,7 +97,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         //Run Drive Base
-        driveTrain.arcadeDrive(Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getY()); //TODO Check correct axis
+        DriveBaseConstants.driveTrain.arcadeDrive(Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getY()); //TODO Check correct axis
         //System.out.println(Constants.driveJoystick.getX() * -1);
         //System.out.println(Constants.ultrasonic.getDistance());
 
@@ -99,7 +105,7 @@ public class Robot extends TimedRobot {
         if(Constants.driveJoystick.getRawButton(2) && released){
             System.out.println("Running Vision Line Up");
             released = false;
-            VisionHandler.runLineUp(xEntry, driveTrain);
+            VisionHandler.runLineUp(xEntry, DriveBaseConstants.driveTrain);
             //VisionLight.getInstance().toggleLightState();
         }
         if(!Constants.driveJoystick.getRawButton(2)){
@@ -113,11 +119,11 @@ public class Robot extends TimedRobot {
         //Elevator Test
         System.out.println(Constants.driveJoystick.getThrottle() + " " + Constants.driveJoystick.getTrigger());
         if(true){//Constants.driveJoystick.getTrigger()){
-            Constants.elevator1.set(-Constants.driveJoystick.getThrottle());
-            Constants.elevator2.set(Constants.driveJoystick.getThrottle());
+            ElevatorConstants.elevator1.set(-Constants.driveJoystick.getThrottle());
+            ElevatorConstants.elevator2.set(Constants.driveJoystick.getThrottle());
         }else{
-            Constants.elevator1.set(0);
-            Constants.elevator2.set(0);
+            ElevatorConstants.elevator1.set(0);
+            ElevatorConstants.elevator2.set(0);
         }
         //updateDashboard();
     }

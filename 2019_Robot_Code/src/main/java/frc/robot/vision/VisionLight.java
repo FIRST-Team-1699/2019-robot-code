@@ -1,7 +1,7 @@
 package frc.robot.vision;
 
 import edu.wpi.first.wpilibj.Relay;
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
 
 public class VisionLight {
     private static VisionLight ourInstance = new VisionLight();

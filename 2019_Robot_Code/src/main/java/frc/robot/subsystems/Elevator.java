@@ -1,12 +1,18 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.ParamEnum;
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.utils.Util;
 import frc.robot.utils.talon.TalonSRXChecker;
 import frc.robot.utils.talon.TalonSRXFactory;
@@ -23,41 +29,43 @@ public class Elevator extends Subsystem {
     private static final double encoderTicksPerInch = 0; //TODO Change
     private static Elevator instance = null;
     private Intake intake = Intake.getInstance();
-    private final TalonSRX master, talon2, talon3, talon4;
+    private final TalonSRX master, slave;
     private PeriodicIO periodicIO = new PeriodicIO();
     private ElevatorControlState elevatorControlState = ElevatorControlState.OpenLoop;
 
     private boolean hasBeenZeroed = false;
 
     private Elevator(){
-        master = TalonSRXFactory.createDefaultTalon(0); //TODO Change constant
+        master = TalonSRXFactory.createDefaultTalon(ElevatorConstants.elevatorMasterId); //TODO Change constant
 
         //TODO Change constants \/
         TalonSRXUtil.checkError(master.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 100), "Could not detect elevator encoder: "); //TODO Check input type
-        TalonSRXUtil.checkError(master.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0), "Could not set forward (down) limit switch elevator: "); //TODO Change constants
-        TalonSRXUtil.checkError(master.configForwardSoftLimitThreshold(forwardSoftLimit, 0), "Could not set forward (down) soft limit switch elevator: ");
-        TalonSRXUtil.checkError(master.configForwardSoftLimitEnable(true, 0), "Could not enable forward (down) soft limit switch elevator: ");
-        TalonSRXUtil.checkError(master.configVoltageCompSaturation(12, 0), "Could not set voltage compensation saturation elevator: ");
-        TalonSRXUtil.checkError(master.configReverseSoftLimitThreshold(reverseSoftLimit, 0), "Could not set reverse (up) soft limit switch elevator: ");
-        TalonSRXUtil.checkError(master.configReverseSoftLimitEnable(true, 0), "Could not enable reverse (up) soft limit switch elevator: ");
-        TalonSRXUtil.checkError(master.config_kP(slot, 0, 0), "Could not set elevator kp: ");
-        TalonSRXUtil.checkError(master.config_kI(slot, 0, 0), "Could not set elevator ki: ");
-        TalonSRXUtil.checkError(master.configMaxIntegralAccumulator(slot, 0, 0), "Could not set elevator max integral: "); //TODO Change constants
-        TalonSRXUtil.checkError(master.config_IntegralZone(slot, 0, 0), "Could not set elevator i zone: ");
-        TalonSRXUtil.checkError(master.configAllowableClosedloopError(slot, 0, 0), "Could not set elevator deadband: ");
-        TalonSRXUtil.checkError(master.configMotionAcceleration(0, 0), "Could not set elevator acceleration ");
-        TalonSRXUtil.checkError(master.configMotionCruiseVelocity(0, 0), "Could not set elevator cruise velocity: ");
-        TalonSRXUtil.checkError(master.config_kP(positionCrontrolSlot, 0, 0), "Could not set elevator kp: ");
-        TalonSRXUtil.checkError(master.config_kI(positionCrontrolSlot, 0, 0), "Could not set elevator ki: ");
-        TalonSRXUtil.checkError(master.config_kD(positionCrontrolSlot, 0, 0), "Could not set elevator kd: ");
-        TalonSRXUtil.checkError(master.configMaxIntegralAccumulator(positionCrontrolSlot, 0, 0), "Could not set elevator max integral: ");
-        TalonSRXUtil.checkError(master.config_IntegralZone(positionCrontrolSlot, 0, 0), "Could not set elevator i zone: ");
-        TalonSRXUtil.checkError(master.configAllowableClosedloopError(positionCrontrolSlot, 0, 0), "Could not set elevator deadband: ");
-        TalonSRXUtil.checkError(master.configClosedloopRamp(0, 0), "Could not set elevator voltage ramp rate: ");
-        TalonSRXUtil.checkError(master.configOpenloopRamp(0, 0), "Could not set elevator voltage ramp rate: ");
-        TalonSRXUtil.checkError(master.configContinuousCurrentLimit(20, 0), "Could not set elevator continuous current limit.");
-        TalonSRXUtil.checkError(master.configPeakCurrentLimit(35, 0), "Could not set elevator peak current limit.");
-        TalonSRXUtil.checkError(master.configPeakCurrentDuration(200, 0), "Could not set elevator peak current duration.");
+        TalonSRXUtil.checkError(master.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Constants.longCANTimeoutMs), "Could not set forward (down) limit switch elevator: "); //TODO Change constants
+        TalonSRXUtil.checkError(master.configForwardSoftLimitThreshold(forwardSoftLimit, Constants.longCANTimeoutMs), "Could not set forward (down) soft limit switch elevator: ");
+        TalonSRXUtil.checkError(master.configForwardSoftLimitEnable(true, Constants.longCANTimeoutMs), "Could not enable forward (down) soft limit switch elevator: ");
+        TalonSRXUtil.checkError(master.configVoltageCompSaturation(12, Constants.longCANTimeoutMs), "Could not set voltage compensation saturation elevator: ");
+        TalonSRXUtil.checkError(master.configReverseSoftLimitThreshold(reverseSoftLimit, Constants.longCANTimeoutMs), "Could not set reverse (up) soft limit switch elevator: ");
+        TalonSRXUtil.checkError(master.configReverseSoftLimitEnable(true, Constants.longCANTimeoutMs), "Could not enable reverse (up) soft limit switch elevator: ");
+        TalonSRXUtil.checkError(master.config_kP(slot, ElevatorConstants.elevatorKP, Constants.longCANTimeoutMs), "Could not set elevator kp: ");
+        TalonSRXUtil.checkError(master.config_kI(slot, ElevatorConstants.elevatorKI, Constants.longCANTimeoutMs), "Could not set elevator ki: ");
+        TalonSRXUtil.checkError(master.config_kD(positionCrontrolSlot, ElevatorConstants.elevatorKD, Constants.longCANTimeoutMs), "Could not set elevator kd: ");
+        TalonSRXUtil.checkError(master.config_kF(positionCrontrolSlot, ElevatorConstants.elevatorKF, Constants.longCANTimeoutMs), "Could not set elevator kf");
+        TalonSRXUtil.checkError(master.configMaxIntegralAccumulator(slot, ElevatorConstants.maxIntegralAccumulator, Constants.longCANTimeoutMs), "Could not set elevator max integral: "); //TODO Change constants
+        TalonSRXUtil.checkError(master.config_IntegralZone(slot, ElevatorConstants.iZone, Constants.longCANTimeoutMs), "Could not set elevator i zone: ");
+        TalonSRXUtil.checkError(master.configAllowableClosedloopError(slot, ElevatorConstants.deadband, Constants.longCANTimeoutMs), "Could not set elevator deadband: ");
+        TalonSRXUtil.checkError(master.configMotionAcceleration(ElevatorConstants.elevatorAcceleration, Constants.longCANTimeoutMs), "Could not set elevator acceleration ");
+        TalonSRXUtil.checkError(master.configMotionCruiseVelocity(ElevatorConstants.elevatorVelocity, Constants.longCANTimeoutMs), "Could not set elevator cruise velocity: ");
+        TalonSRXUtil.checkError(master.config_kP(positionCrontrolSlot, ElevatorConstants.elevatorJogKP, Constants.longCANTimeoutMs), "Could not set elevator kp: ");
+        TalonSRXUtil.checkError(master.config_kI(positionCrontrolSlot, ElevatorConstants.elevatorJogKI, Constants.longCANTimeoutMs), "Could not set elevator ki: ");
+        TalonSRXUtil.checkError(master.config_kD(positionCrontrolSlot, ElevatorConstants.elevatorJogKD, Constants.longCANTimeoutMs), "Could not set elevator kd: ");
+        TalonSRXUtil.checkError(master.configMaxIntegralAccumulator(positionCrontrolSlot, ElevatorConstants.maxIntegralAccumulator, Constants.longCANTimeoutMs), "Could not set elevator max integral: ");
+        TalonSRXUtil.checkError(master.config_IntegralZone(positionCrontrolSlot, ElevatorConstants.iZone, Constants.longCANTimeoutMs), "Could not set elevator i zone: ");
+        TalonSRXUtil.checkError(master.configAllowableClosedloopError(positionCrontrolSlot, ElevatorConstants.deadband, Constants.longCANTimeoutMs), "Could not set elevator deadband: ");
+        TalonSRXUtil.checkError(master.configClosedloopRamp(ElevatorConstants.elevatorRampRate, Constants.longCANTimeoutMs), "Could not set elevator voltage ramp rate: ");
+        TalonSRXUtil.checkError(master.configOpenloopRamp(ElevatorConstants.elevatorRampRate, Constants.longCANTimeoutMs), "Could not set elevator voltage ramp rate: ");
+        TalonSRXUtil.checkError(master.configContinuousCurrentLimit(20, Constants.longCANTimeoutMs), "Could not set elevator continuous current limit.");
+        TalonSRXUtil.checkError(master.configPeakCurrentLimit(35, Constants.longCANTimeoutMs), "Could not set elevator peak current limit.");
+        TalonSRXUtil.checkError(master.configPeakCurrentDuration(200, Constants.longCANTimeoutMs), "Could not set elevator peak current duration.");
         master.enableCurrentLimit(true);
 
         master.configSetParameter(ParamEnum.eClearPositionOnLimitF, 0, 0, 0, 0);
@@ -76,10 +84,8 @@ public class Elevator extends Subsystem {
         master.setInverted(true); //TODO Check
         master.setSensorPhase(true);
 
-        //TODO Add slaves
-        talon2 = new TalonSRX(0);
-        talon3 = new TalonSRX(0);
-        talon4 = new TalonSRX(0);
+        slave = TalonSRXFactory.createPermanentSlaveTalon(ElevatorConstants.elevatorSlaveId, ElevatorConstants.elevatorMasterId);
+        slave.setInverted(true);
 
         master.set(ControlMode.PercentOutput, 0);
         setNeutralMode(NeutralMode.Brake);
@@ -180,9 +186,7 @@ public class Elevator extends Subsystem {
 
     private void setNeutralMode(NeutralMode neutralMode){
         master.setNeutralMode(neutralMode);
-        talon2.setNeutralMode(neutralMode);
-        talon3.setNeutralMode(neutralMode);
-        talon4.setNeutralMode(neutralMode);
+        slave.setNeutralMode(neutralMode);
     }
 
     @Override
@@ -193,12 +197,12 @@ public class Elevator extends Subsystem {
         if(master.getControlMode() == ControlMode.MotionMagic){
             periodicIO.activeTrajectoryPosition = master.getActiveTrajectoryPosition();
             final int newVel = master.getActiveTrajectoryVelocity();
-            if(Util.epsilonEquals(newVel, 0, 5) || Util.epsilonEquals(newVel, periodicIO.activeTrajectoryVelocity, 5)){
+            if(Util.epsilonEquals(newVel, ElevatorConstants.elevatorVelocity, 5) || Util.epsilonEquals(newVel, periodicIO.activeTrajectoryVelocity, 5)){
                 periodicIO.activeTrajectoryAccelG = 0.0;
             }else if(newVel > periodicIO.activeTrajectoryVelocity){
-                periodicIO.activeTrajectoryAccelG = -0; //TODO Fix constants
+                periodicIO.activeTrajectoryAccelG = -ElevatorConstants.elevatorAcceleration; //TODO Modify num
             }else{
-                periodicIO.activeTrajectoryAccelG = 0; //TODO Fix constants
+                periodicIO.activeTrajectoryAccelG = ElevatorConstants.elevatorAcceleration; //TODO Modify num
             }
             periodicIO.activeTrajectoryVelocity = newVel;
         }else{
@@ -210,8 +214,8 @@ public class Elevator extends Subsystem {
         periodicIO.limitSwitch = master.getSensorCollection().isFwdLimitSwitchClosed();
         periodicIO.t = t;
 
-        if(getInchesOffGround() > 0) {
-            periodicIO.feedForward = intake.hasGamePiece() ? 0 : 0; //TODO Change constants
+        if(getInchesOffGround() > ElevatorConstants.epsilon) {
+            periodicIO.feedForward = intake.hasGamePiece() ? ElevatorConstants.feedForwardWithGamePiece : ElevatorConstants.feedForwardWithoutGamePiece; //TODO Change constants
         }else{
             periodicIO.feedForward = 0.0;
         }
@@ -236,7 +240,7 @@ public class Elevator extends Subsystem {
         boolean leftSide = TalonSRXChecker.CheckTalons(this, new ArrayList<TalonSRXChecker.TalonSRXConfig>(){
                 {
                     add(new TalonSRXChecker.TalonSRXConfig("master", master));
-                    add(new TalonSRXChecker.TalonSRXConfig("talon2", talon2));
+                    add(new TalonSRXChecker.TalonSRXConfig("talon2", slave));
                 }
             }, new TalonSRXChecker.CheckerConfig() {
                 {
@@ -250,24 +254,7 @@ public class Elevator extends Subsystem {
                 }
             });
 
-        boolean rightSide = TalonSRXChecker.CheckTalons(this, new ArrayList<TalonSRXChecker.TalonSRXConfig>(){
-            {
-                add(new TalonSRXChecker.TalonSRXConfig("talon3", talon3));
-                add(new TalonSRXChecker.TalonSRXConfig("talon4", talon4));
-            }
-        }, new TalonSRXChecker.CheckerConfig() {
-            {
-                currentFloor = 2;
-                rpmFloor = 200;
-                currentEpsilon = 2.0;
-                rpmEpsilon = 250;
-                runTimeSec = 2.0;
-                runOutputPercentage = -0.4;
-                rpmSupplier = () -> master.getSelectedSensorVelocity(0);
-            }
-        });
-
-        return leftSide && rightSide;
+        return leftSide;
     }
 
     public double getActiveTrajectorAccelG(){

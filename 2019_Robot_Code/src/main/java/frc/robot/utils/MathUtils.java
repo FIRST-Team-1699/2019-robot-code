@@ -1,6 +1,6 @@
 package frc.robot.utils;
 
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
 
 public class MathUtils {
 
