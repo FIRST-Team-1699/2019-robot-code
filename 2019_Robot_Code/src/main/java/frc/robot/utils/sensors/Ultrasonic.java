@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.utils.sensors;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import frc.robot.Constants;

@@ -4,8 +4,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.subsystems.Gyro;
-import frc.robot.subsystems.Ultrasonic;
+import frc.robot.utils.sensors.Gyro;
+import frc.robot.utils.sensors.Ultrasonic;
 
 public class Constants {
 
