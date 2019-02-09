@@ -73,17 +73,17 @@ public class Intake extends Subsystem {
         currentState.wristSetpoint = Wrist.getInstance().getSetpoint();
         return currentState;
     }
-/*
+
     @Override
-    public void registedEnabledLoops(ILooper enabledLooper) {
+    public void registerEnabledLoops(ILooper enabledLooper) {
         Loop loop = new Loop() {
 
             @Override
             public void onStart(double timestamp) {
                 if(hasGamePiece()) {
-                    wantedAction = IntakeStateMachine.WantGamePiece; //TODO add multiple game pieces?
+                    wantedAction = IntakeStateMachine.WantedAction.WantGamePiece; //TODO add multiple game pieces?
                 }else{
-                    wantedAction = IntakeStateMachine.WantManual;
+                    wantedAction = IntakeStateMachine.WantedAction.WantManual;
                 }
             }
 
@@ -103,7 +103,7 @@ public class Intake extends Subsystem {
         };
         enabledLooper.register(loop);
     }
-*/
+
     private void setJaw(IntakeState.JawState state){
         //TODO Implement
     }

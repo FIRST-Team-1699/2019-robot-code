@@ -270,6 +270,10 @@ public class Elevator extends Subsystem {
         return leftSide && rightSide;
     }
 
+    public double getActiveTrajectorAccelG(){
+        return 0.0; //TODO Implement
+    }
+
     private enum ElevatorControlState {
         OpenLoop,
         MotionMagic,

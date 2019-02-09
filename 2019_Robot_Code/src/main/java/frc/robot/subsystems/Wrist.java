@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.StickyFaults;
@@ -18,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.loops.ILooper;
 import frc.robot.loops.Loop;
 import frc.robot.utils.Util;
+import frc.robot.utils.crashtracking.ReflectingCSVWriter;
 import frc.robot.utils.talon.TalonSRXChecker;
 import frc.robot.utils.talon.TalonSRXFactory;
 import frc.robot.utils.talon.TalonSRXUtil;
@@ -42,7 +42,7 @@ public class Wrist extends Subsystem {
     private double zeroPosition = Double.NaN;
     private SystemState systemState = SystemState.Homing; //TODO Check init state
     private SystemState desiredState = SystemState.MotionProfiling; //TODO Check init state
-    //private ReflectingCVSWriter<PeriodicIO> csvWriter = null;
+    private ReflectingCSVWriter<PeriodicIO> csvWriter = null;
 
     private Wrist(){
         master = TalonSRXFactory.createDefaultTalon(0); //TODO Add id constant
@@ -213,9 +213,9 @@ public class Wrist extends Subsystem {
         SmartDashboard.putBoolean("Wrist Has Sent Trajectory", hasFinishedTrajectory());
         SmartDashboard.putNumber("Wrist feedforward", periodicIO.feedForward);
 
-       /* if(csvWriter != null){
+        if(csvWriter != null){
             csvWriter.write();
-        }*/
+        }
     }
 
     public synchronized void setRampRate(final double rampRate){
@@ -331,10 +331,9 @@ public class Wrist extends Subsystem {
     }
 
     public synchronized boolean hasFinishedTrajectory(){
-       /* if(Util.epsilonEquals(periodicIO.activeTrajectoryPosition, degreesTOSEnsorUnits(getSetpoint()), 2)){
+        if(Util.epsilonEquals(periodicIO.activeTrajectoryPosition, degreesToSensorUnits(getSetpoint()), 2)){
             return true;
         }
-        */
         return false;
     }
 
@@ -367,7 +366,7 @@ public class Wrist extends Subsystem {
             if(periodicIO.activeTrajectoryPosition < reverseSoftLimit){
                 DriverStation.reportError("Active trajectory past reverse soft limit!", false);
             }else if(periodicIO.activeTrajectoryPosition > forwardSoftLimit) {
-                DriverStation.reportError("Acive trajectory past forward soft limit!", false);
+                DriverStation.reportError("Active trajectory past forward soft limit!", false);
             }
             final int newVel = master.getActiveTrajectoryVelocity();
 
@@ -390,9 +389,9 @@ public class Wrist extends Subsystem {
         
         if(getAngle() > 0 || sensorUnitsToDegrees(periodicIO.activeTrajectoryPosition) > 0) { //TODO Change constants
             double wristGravityComponent = Math.cos(Math.toRadians(getAngle())) * (intake.hasGamePiece() ? 0 : 0); //TODO Change constants
-           // double elevatorAccelerationComponent = elevator.getActiveTrajectorAccelG() * 0; //TODO Change constants
+           double elevatorAccelerationComponent = elevator.getActiveTrajectorAccelG() * 0; //TODO Change constants
             double wristAccelerationComponent = periodicIO.activeTrajectoryAccelerationRadPerS2 * (intake.hasGamePiece() ? 0 : 0); //TODO Change constants
-           // periodicIO.feedForward = elevatorAccelerationComponent * wristGravityComponent + wristAccelerationComponent;
+           periodicIO.feedForward = elevatorAccelerationComponent * wristGravityComponent + wristAccelerationComponent;
         }else{
             if(getSetpoint() < Util.epsilon) {
                 periodicIO.feedForward = -0.1;
@@ -400,11 +399,11 @@ public class Wrist extends Subsystem {
                 periodicIO.feedForward = 0.1;
             }
         }
-        /*
+
         if(csvWriter != null){
             csvWriter.add(periodicIO);
         }
-        */
+
     }
     
     @Override

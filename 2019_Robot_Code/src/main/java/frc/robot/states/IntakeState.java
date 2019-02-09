@@ -15,6 +15,10 @@ public class IntakeState {
     public boolean leftSensorTriggered = false;
     public boolean rightSensorTriggered = false;
 
+    public boolean seesBall(){
+        return false; //TODO Implement
+    }
+
     public void setPower(double power) {
         leftMotor = rightMotor = power;
     }

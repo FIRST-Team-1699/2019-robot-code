@@ -48,7 +48,7 @@ public class IntakeStateMachine {
     public synchronized void setWantedPower(double power){
         wantedPower = power;
     }
-/*
+
     public IntakeState update(double timestamp, WantedAction wantedAction, IntakeState currentState) {
         synchronized (IntakeStateMachine.this){
             SystemState newState;
@@ -88,7 +88,7 @@ public class IntakeStateMachine {
         }
         return commandedState;
     }
-    */
+
     private synchronized SystemState handleOpenLoopTransitions(WantedAction wantedAction, IntakeState currentState){
         switch(wantedAction){
             case WantGamePiece:
@@ -97,6 +97,10 @@ public class IntakeStateMachine {
             default:
                 return SystemState.OpenLoop;
         }
+    }
+
+    private synchronized SystemState handleKeepingGamePieceTransitions(WantedAction wantedAction, IntakeState currentState){
+        return null; //TODO Implement
     }
 
     private synchronized void getOpenLoopCommandedState(IntakeState currentState, IntakeState commandedState){
@@ -108,7 +112,7 @@ public class IntakeStateMachine {
         }
         //TODO Add LEDs?
     }
-/*
+
     private synchronized void getKeepingGamePieceCommandedState(IntakeState currentState, IntakeState commandedState, double timestamp){
         commandedState.setPower(intakeBallSetpoint);
         boolean close = (currentState.seesBall() && wantedJawState != IntakeState.JawState.Open) || mustStayClosed(currentState);
@@ -144,8 +148,7 @@ public class IntakeStateMachine {
                 commandedState.jawState = mustStayClosed(currentState) ? IntakeState.JawState.Closed : IntakeState.JawState.Open;
             }
         }
-    } 
-    */
+    }
 
     private boolean mustStayClosed(IntakeState state) {
         return state.wristSetpoint < 0 || state.wristAngle < 0; //TODO Change constants
