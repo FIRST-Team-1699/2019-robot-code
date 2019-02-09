@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import frc.robot.utils.sensors.Gyro;
 import frc.robot.utils.sensors.Ultrasonic;
 
@@ -26,6 +27,9 @@ public class Constants {
     public static VictorSP elevator1;
     public static VictorSP elevator2;
 
+    //Accelerometer
+    public static Accelerometer accel;
+
     public static final int elevator1Port = 2;
     public static final int elevator2Port = 3;
 
@@ -41,6 +45,7 @@ public class Constants {
 
     //Network Table Constants
     public static final double[] defaultDoubleArray = {0.0, 0.0, 0.0, 0.0};
+
 
     //Vision Constants
     public static Relay lightRelay;

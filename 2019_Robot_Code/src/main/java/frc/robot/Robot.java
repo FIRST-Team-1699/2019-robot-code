@@ -61,6 +61,9 @@ public class Robot extends TimedRobot {
         //Init Light
         Constants.lightRelay = new Relay(Constants.lightRelatPort);
 
+        //Accelerometer
+        Constants.accel = new BuiltInAccelerometer();
+
         //Init Sensors
         Constants.gyro = new Gyro();
         Constants.gyro.calibrate();
@@ -102,6 +105,7 @@ public class Robot extends TimedRobot {
         if(!Constants.driveJoystick.getRawButton(2)){
             released = true;
         }
+
     }
 
     @Override
@@ -115,9 +119,14 @@ public class Robot extends TimedRobot {
             Constants.elevator1.set(0);
             Constants.elevator2.set(0);
         }
+        //updateDashboard();
     }
-
+    int testCounter = 0;
     private void updateDashboard(){
-
+        if (testCounter++ > 200){
+            System.out.println("X: " + Constants.accel.getX() + " Y: " + Constants.accel.getY() + " Z: " + Constants.accel.getZ());
+            testCounter =0;
+        }
+        
     }
 }
