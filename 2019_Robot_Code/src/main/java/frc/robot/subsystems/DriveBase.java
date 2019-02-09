@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+
+public class DriveBase extends Subsystem{
+
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -41,6 +44,7 @@ public class DriveBase extends Subsystem {
         drive.arcadeDrive(periodicIO.rotateDemand, periodicIO.forwardDemand);
     }
 
+
     @Override
     public boolean checkSystem() {
         return false;
@@ -56,6 +60,8 @@ public class DriveBase extends Subsystem {
 
     }
 
+}
+
     public synchronized void setOpenLoop(double forwardDemand, double rotateDemand){
         //TODO Change state
         periodicIO.forwardDemand = forwardDemand;
@@ -69,5 +75,4 @@ public class DriveBase extends Subsystem {
         //Outputs
         public double rotateDemand;
         public double forwardDemand;
-    }
-}
+

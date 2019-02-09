@@ -38,7 +38,7 @@ public class Intake extends Subsystem {
         leftMaster.configVoltageCompSaturation(12.0, 0); //TODO Set constants \/
         leftMaster.enableVoltageCompensation(true);
 
-        rightMaster = TalonSRXFactory.createDefaultTalon(0) //TODO Add id
+        rightMaster = TalonSRXFactory.createDefaultTalon(0); //TODO Add id
         rightMaster.set(ControlMode.PercentOutput, 0);
         rightMaster.setInverted(false);
         rightMaster.configVoltageCompSaturation(12.0, 0); //TODO Set constants
@@ -73,7 +73,7 @@ public class Intake extends Subsystem {
         currentState.wristSetpoint = Wrist.getInstance().getSetpoint();
         return currentState;
     }
-
+/*
     @Override
     public void registedEnabledLoops(ILooper enabledLooper) {
         Loop loop = new Loop() {
@@ -103,7 +103,7 @@ public class Intake extends Subsystem {
         };
         enabledLooper.register(loop);
     }
-
+*/
     private void setJaw(IntakeState.JawState state){
         //TODO Implement
     }

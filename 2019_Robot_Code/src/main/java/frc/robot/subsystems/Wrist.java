@@ -35,14 +35,14 @@ public class Wrist extends Subsystem {
 
     private static Wrist instance;
     private final Intake intake = Intake.getInstance();
-    private final CarriageCanifier canifier = CarrigeCanifier.getInstance();
+    private final CarriageCanifier canifier = CarriageCanifier.getInstance();
     private final Elevator elevator = Elevator.getInstance();
     private final TalonSRX master;
     private final PeriodicIO periodicIO = new PeriodicIO();
     private double zeroPosition = Double.NaN;
     private SystemState systemState = SystemState.Homing; //TODO Check init state
     private SystemState desiredState = SystemState.MotionProfiling; //TODO Check init state
-    private ReflectingCVSWriter<PeriodicIO> csvWriter = null;
+    //private ReflectingCVSWriter<PeriodicIO> csvWriter = null;
 
     private Wrist(){
         master = TalonSRXFactory.createDefaultTalon(0); //TODO Add id constant
@@ -63,10 +63,10 @@ public class Wrist extends Subsystem {
             DriverStation.reportError("Could not set forward limit switch wrise: " + errorCode, false);
         }
 
-        errorCode = master.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteCANifier, LimitSwitchNormal.NormallyOpen, canifier.getDeviceID(), 0); //TODO Change constants
+       /* errorCode = master.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteCANifier, LimitSwitchNormal.NormallyOpen, canifier.getDeviceID(), 0); //TODO Change constants
         if(errorCode != ErrorCode.OK){
             DriverStation.reportError("Could not set reverse limit switch wrist: " + errorCode, false);
-        }
+        }*/
 
         errorCode = master.configForwardSoftLimitThreshold(forwardSoftLimit, 0); //TODO Change constants
         if(errorCode != ErrorCode.OK){
@@ -213,9 +213,9 @@ public class Wrist extends Subsystem {
         SmartDashboard.putBoolean("Wrist Has Sent Trajectory", hasFinishedTrajectory());
         SmartDashboard.putNumber("Wrist feedforward", periodicIO.feedForward);
 
-        if(csvWriter != null){
+       /* if(csvWriter != null){
             csvWriter.write();
-        }
+        }*/
     }
 
     public synchronized void setRampRate(final double rampRate){
@@ -331,9 +331,10 @@ public class Wrist extends Subsystem {
     }
 
     public synchronized boolean hasFinishedTrajectory(){
-        if(Util.epsilonEquals(periodicIO.activeTrajectoryPosition, degreesTOSEnsorUnits(getSetpoint()), 2)){
+       /* if(Util.epsilonEquals(periodicIO.activeTrajectoryPosition, degreesTOSEnsorUnits(getSetpoint()), 2)){
             return true;
         }
+        */
         return false;
     }
 
@@ -389,9 +390,9 @@ public class Wrist extends Subsystem {
         
         if(getAngle() > 0 || sensorUnitsToDegrees(periodicIO.activeTrajectoryPosition) > 0) { //TODO Change constants
             double wristGravityComponent = Math.cos(Math.toRadians(getAngle())) * (intake.hasGamePiece() ? 0 : 0); //TODO Change constants
-            double elevatorAccelerationComponent = elevator.getActiveTrajectorAccelG() * 0; //TODO Change constants
+           // double elevatorAccelerationComponent = elevator.getActiveTrajectorAccelG() * 0; //TODO Change constants
             double wristAccelerationComponent = periodicIO.activeTrajectoryAccelerationRadPerS2 * (intake.hasGamePiece() ? 0 : 0); //TODO Change constants
-            periodicIO.feedForward = elevatorAccelerationComponent * wristGravityComponent + wristAccelerationComponent;
+           // periodicIO.feedForward = elevatorAccelerationComponent * wristGravityComponent + wristAccelerationComponent;
         }else{
             if(getSetpoint() < Util.epsilon) {
                 periodicIO.feedForward = -0.1;
@@ -399,9 +400,11 @@ public class Wrist extends Subsystem {
                 periodicIO.feedForward = 0.1;
             }
         }
+        /*
         if(csvWriter != null){
             csvWriter.add(periodicIO);
         }
+        */
     }
     
     @Override
