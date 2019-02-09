@@ -7,11 +7,10 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.robot.subsystems.Gyro;
-import frc.robot.subsystems.Ultrasonic;
+import frc.robot.utils.sensors.Gyro;
+import frc.robot.utils.sensors.Ultrasonic;
 import frc.robot.vision.VisionHandler;
 import frc.robot.utils.NetworkTableClient;
-import frc.robot.vision.VisionLight;
 
 import static frc.robot.Constants.driveTrain;
 
