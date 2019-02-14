@@ -15,13 +15,23 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DriveBaseConstants;
 import frc.robot.constants.ElevatorConstants;
+import frc.robot.loops.Looper;
+import frc.robot.subsystems.CarriageCanifier;
+import frc.robot.subsystems.DriveBase;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.SubsystemManager;
+import frc.robot.subsystems.Wrist;
 import frc.robot.utils.sensors.Gyro;
 import frc.robot.utils.sensors.Ultrasonic;
 import frc.robot.vision.VisionHandler;
 import frc.robot.utils.NetworkTableClient;
 
+import java.util.Arrays;
+
 public class Robot extends TimedRobot {
 
+    //TODO Start remove./move
     private NetworkTableClient nTableClient;
     private NetworkTableInstance nTable;
     private NetworkTableEntry xEntry;
@@ -29,9 +39,42 @@ public class Robot extends TimedRobot {
 
     //Light var
     private boolean released = true;
+    //TODO End remove/move
+
+    private Looper enabledLooper = new Looper();
+    private Looper disabledLooper = new Looper();
+
+    private CarriageCanifier carriageCanifier = CarriageCanifier.getInstance();
+    private DriveBase driveBase = DriveBase.getInstance();
+    private Elevator elevator = Elevator.getInstance();
+    private Intake intake = Intake.getInstance();
+    private Wrist wrist = Wrist.getInstance();
+
+    private final SubsystemManager subsystemManager = new SubsystemManager(
+            Arrays.asList(
+                    DriveBase.getInstance(),
+                    CarriageCanifier.getInstance(),
+                    Elevator.getInstance(),
+                    Intake.getInstance(),
+                    Wrist.getInstance()
+            )
+    );
 
     @Override
     public void robotInit() {
+        //TODO Try catch
+        //Start Camera
+        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+        camera.setResolution(640, 480);
+        camera.setBrightness(10);
+        camera.setExposureManual(10);
+
+        //Start Looper
+        subsystemManager.registerEnabledLoops(enabledLooper);
+        subsystemManager.registerDisabledLoops(disabledLooper);
+
+
+
         //Motor Controller Definition
         DriveBaseConstants.portMaster = new VictorSP(DriveBaseConstants.portMasterPort);
         DriveBaseConstants.portSlave = new VictorSP(DriveBaseConstants.portSlavePort);
@@ -58,12 +101,6 @@ public class Robot extends TimedRobot {
         //Joystick Controller Definition
         Constants.driveJoystick = new Joystick(Constants.joystickPort);
 
-        //Start Camera
-        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-        camera.setResolution(640, 480);
-        camera.setBrightness(10);
-        camera.setExposureManual(10);
-
         //Init Light
         Constants.lightRelay = new Relay(Constants.lightRelatPort);
 
@@ -76,6 +113,26 @@ public class Robot extends TimedRobot {
         Constants.gyro.zero();
         Constants.ultrasonic = new Ultrasonic();
 
+    }
+
+    @Override
+    public void disabledInit(){
+        enabledLooper.stop();
+        DriveBase.getInstance().zeroSensors();
+        disabledLooper.start();
+    }
+
+    @Override
+    public void disabledPeriodic(){
+        outputToSmartDashboard();
+        //TODO Reset
+    }
+
+    @Override
+    public void teleopInit() {
+        disabledLooper.stop();
+        enabledLooper.start();
+        //TODO Add more inits
     }
 
     @Override
@@ -127,6 +184,8 @@ public class Robot extends TimedRobot {
         }
         //updateDashboard();
     }
+
+
     int testCounter = 0;
     private void updateDashboard(){
         if (testCounter++ > 200){
@@ -134,5 +193,14 @@ public class Robot extends TimedRobot {
             testCounter =0;
         }
         
+    }
+
+    private void outputToSmartDashboard(){
+        //TODO Populate
+        carriageCanifier.outputTelemetry();
+        driveBase.outputTelemetry();
+        elevator.outputTelemetry();
+        intake.outputTelemetry();
+        wrist.outputTelemetry();
     }
 }
