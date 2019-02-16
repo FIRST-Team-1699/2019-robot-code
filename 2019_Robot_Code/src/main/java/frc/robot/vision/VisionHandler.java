@@ -6,6 +6,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.constants.Constants;
+import frc.robot.constants.DriveBaseConstants;
 import frc.robot.utils.MathUtils;
 import frc.robot.utils.SynchronousPIDF;
 
@@ -56,7 +57,9 @@ public class VisionHandler {
     }
 
     public static void runLineUp(final NetworkTableEntry xEntry, final DifferentialDrive driveTrain){
-        rotatePID = new SynchronousPIDF(0.4, 0.25, 0.0);
+        rotatePID = new SynchronousPIDF(DriveBaseConstants.pConstant
+                                        , DriveBaseConstants.iConstant
+                                        , DriveBaseConstants.dConstant);
         
         Thread thread = new Thread(() -> {
             //gl 2/2/19
@@ -100,7 +103,7 @@ public class VisionHandler {
                     while(!MathUtils.checkTolerance(Constants.gyro.getAngle() - rotatePID.getSetpoint(), .5) && pidIterations < 3 && !Thread.interrupted() && DriverStation.getInstance().isEnabled()){
                         startTime = System.nanoTime();
                         motorSpeed = -rotatePID.calculate(Constants.gyro.getAngle(), .01);
-                        Constants.driveTrain.arcadeDrive(motorSpeed, 0);
+                        DriveBaseConstants.driveTrain.arcadeDrive(motorSpeed, 0);
                         //pidIterations++; //TODO Uncomment/add timeout
                         System.out.println("Gyro: " + Constants.gyro.getAngle() + " Gyro Setpoint: " + neededGyroChange + " motor value: " + motorSpeed);
 

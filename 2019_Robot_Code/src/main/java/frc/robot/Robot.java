@@ -29,6 +29,9 @@ import frc.robot.utils.NetworkTableClient;
 
 import java.util.Arrays;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 public class Robot extends TimedRobot {
 
     //TODO Start remove./move
@@ -44,7 +47,7 @@ public class Robot extends TimedRobot {
     private Looper enabledLooper = new Looper();
     private Looper disabledLooper = new Looper();
 
-    private CarriageCanifier carriageCanifier = CarriageCanifier.getInstance();
+ /* private CarriageCanifier carriageCanifier = CarriageCanifier.getInstance();
     private DriveBase driveBase = DriveBase.getInstance();
     private Elevator elevator = Elevator.getInstance();
     private Intake intake = Intake.getInstance();
@@ -58,7 +61,7 @@ public class Robot extends TimedRobot {
                     Intake.getInstance(),
                     Wrist.getInstance()
             )
-    );
+    );*/
 
     @Override
     public void robotInit() {
@@ -70,25 +73,27 @@ public class Robot extends TimedRobot {
         camera.setExposureManual(10);
 
         //Start Looper
-        subsystemManager.registerEnabledLoops(enabledLooper);
-        subsystemManager.registerDisabledLoops(disabledLooper);
+        //subsystemManager.registerEnabledLoops(enabledLooper);
+       // subsystemManager.registerDisabledLoops(disabledLooper);
 
 
 
         //Motor Controller Definition
-        DriveBaseConstants.portMaster = new VictorSP(DriveBaseConstants.portMasterPort);
-        DriveBaseConstants.portSlave = new VictorSP(DriveBaseConstants.portSlavePort);
+        DriveBaseConstants.portMaster = new WPI_TalonSRX(DriveBaseConstants.portMasterPort);
+        DriveBaseConstants.portSlave = new WPI_TalonSRX(DriveBaseConstants.portSlavePort);
         DriveBaseConstants.portMaster.setInverted(true);
         DriveBaseConstants.portSlave.setInverted(true);
-        DriveBaseConstants.starboardMaster = new VictorSP(DriveBaseConstants.starboardMasterPort);
-        DriveBaseConstants.starboardSlave = new VictorSP(DriveBaseConstants.starboardSlavePort);
+        DriveBaseConstants.starboardMaster = new WPI_TalonSRX(DriveBaseConstants.starboardMasterPort);
+        DriveBaseConstants.starboardSlave = new WPI_TalonSRX(DriveBaseConstants.starboardSlavePort);
         SpeedControllerGroup portMotorGroup = new SpeedControllerGroup(DriveBaseConstants.portMaster, DriveBaseConstants.portSlave);
         SpeedControllerGroup starboardMotorGroup = new SpeedControllerGroup(DriveBaseConstants.starboardMaster, DriveBaseConstants.starboardSlave);
+       
         DriveBaseConstants.driveTrain = new DifferentialDrive(portMotorGroup, starboardMotorGroup);
 
         //Elevator Test Inits
-        ElevatorConstants.elevator1 = new VictorSP(ElevatorConstants.elevator1Port);
-        ElevatorConstants.elevator2 = new VictorSP(ElevatorConstants.elevator2Port);
+        ElevatorConstants.elevator1 = new WPI_TalonSRX(14);
+        ElevatorConstants.elevator2 = new WPI_TalonSRX(15);
+        SpeedControllerGroup elevatorGroup = new SpeedControllerGroup(ElevatorConstants.elevator1, ElevatorConstants.elevator2);
         ElevatorConstants.elevator2.setInverted(true); //TODO Change
 
         //Network table variables
@@ -154,7 +159,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         //Run Drive Base
-        DriveBaseConstants.driveTrain.arcadeDrive(Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getY()); //TODO Check correct axis
+        DriveBaseConstants.driveTrain.arcadeDrive(Constants.driveJoystick.getY() * -1, Constants.driveJoystick.getX()); //TODO Check correct axis
         //System.out.println(Constants.driveJoystick.getX() * -1);
         //System.out.println(Constants.ultrasonic.getDistance());
 
@@ -175,7 +180,7 @@ public class Robot extends TimedRobot {
     public void testPeriodic() {
         //Elevator Test
         System.out.println(Constants.driveJoystick.getThrottle() + " " + Constants.driveJoystick.getTrigger());
-        if(true){//Constants.driveJoystick.getTrigger()){
+        if(Constants.driveJoystick.getTrigger()){
             ElevatorConstants.elevator1.set(-Constants.driveJoystick.getThrottle());
             ElevatorConstants.elevator2.set(Constants.driveJoystick.getThrottle());
         }else{
@@ -197,10 +202,11 @@ public class Robot extends TimedRobot {
 
     private void outputToSmartDashboard(){
         //TODO Populate
-        carriageCanifier.outputTelemetry();
+        //driveBase.outputTelemetry();
+      /*  carriageCanifier.outputTelemetry();
         driveBase.outputTelemetry();
         elevator.outputTelemetry();
         intake.outputTelemetry();
-        wrist.outputTelemetry();
+        wrist.outputTelemetry();*/
     }
 }

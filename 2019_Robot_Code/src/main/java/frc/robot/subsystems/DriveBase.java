@@ -1,22 +1,26 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.constants.DriveBaseConstants;
 
 public class DriveBase extends Subsystem {
 
     private static DriveBase instance = null;
-    private final VictorSP portMaster, portSlave, starMaster, starSlave; //TODO Change to talons
+    private final SpeedController portMaster, portSlave, starMaster, starSlave; 
     private final DifferentialDrive drive;
     private final SpeedControllerGroup portGroup, starGroup;
     private PeriodicIO periodicIO = new PeriodicIO();
 
     private DriveBase() {
-        portMaster = new VictorSP(0);
-        portSlave = new VictorSP(1);
-        starMaster = new VictorSP(4);
-        starSlave = new VictorSP(5);
+        portMaster = new WPI_TalonSRX(DriveBaseConstants.starboardMasterPort);
+        portSlave = new WPI_TalonSRX(DriveBaseConstants.starboardSlavePort);
+        starMaster = new WPI_TalonSRX(DriveBaseConstants.portMasterPort);
+        starSlave = new WPI_TalonSRX(DriveBaseConstants.portSlavePort);
 
         portGroup = new SpeedControllerGroup(portMaster, portSlave);
         starGroup = new SpeedControllerGroup(starMaster, starSlave);

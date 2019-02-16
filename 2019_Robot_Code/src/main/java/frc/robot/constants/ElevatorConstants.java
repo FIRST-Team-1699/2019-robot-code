@@ -1,12 +1,13 @@
 package frc.robot.constants;
 
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.VictorSP;
 
 public class ElevatorConstants {
 
     //Elevator Constants
-    public static VictorSP elevator1;
-    public static VictorSP elevator2;
+    public static SpeedController elevator1;
+    public static SpeedController elevator2;
     public static final int elevator1Port = 2;
     public static final int elevator2Port = 3;
     public static final int elevatorMasterId = 0; //TODO Change constants
