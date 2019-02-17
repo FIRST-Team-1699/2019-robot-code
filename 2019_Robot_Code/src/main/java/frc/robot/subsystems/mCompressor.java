@@ -2,12 +2,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.constants.PnumaticsConstants;
 
 public class mCompressor extends Subsystem{
     private static mCompressor mCompressorInstance = null;
     Compressor compressor;
     private mCompressor(){
-        compressor = new Compressor(0);
+        compressor = new Compressor(PnumaticsConstants.pcmid);
         Start();
     }
     public static mCompressor getInstance(){

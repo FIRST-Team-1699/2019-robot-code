@@ -2,15 +2,20 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.Solenoid;
+
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.constants.ClawConstants;
+import frc.robot.constants.PnumaticsConstants;
 import frc.robot.loops.ILooper;
 import frc.robot.loops.Loop;
 import frc.robot.statemachine.IntakeStateMachine;
 import frc.robot.states.IntakeState;
 import frc.robot.utils.talon.TalonSRXChecker;
 import frc.robot.utils.talon.TalonSRXFactory;
+//import sun.font.TrueTypeFont;
 
 import java.util.ArrayList;
 
@@ -19,30 +24,33 @@ public class Intake extends Subsystem {
     private static final boolean extended = true;
 
     private static Intake instance;
-    private final Solenoid closeSolenoid, extendSolenoid; //TODO Add comment for open/close
-    private final TalonSRX leftMaster, rightMaster;
+    private final DoubleSolenoid grabberSolenoid; //TODO Add comment for open/close
+    private final TalonSRX portMaster, starboardMaster;
     private final CarriageCanifier canifier = CarriageCanifier.getInstance();
     //TODO Add led control?
     private IntakeStateMachine.WantedAction wantedAction = IntakeStateMachine.WantedAction.WantManual;
     private IntakeState.JawState jawState;
     private IntakeState currentState = new IntakeState();
     private IntakeStateMachine intakeStateMachine = new IntakeStateMachine();
+    private boolean clawOpen;
 
     private Intake(){
-        closeSolenoid = new Solenoid(0); //TODO Add make solenoid in constants and add id
-        extendSolenoid = new Solenoid(0); //TODO Add make solenoid in constants and add id
+        grabberSolenoid = new DoubleSolenoid(PnumaticsConstants.pcmid
+                                            , PnumaticsConstants.ClawPistonsOpen
+                                            ,PnumaticsConstants.ClawPistonsClosed); 
+        
+        clawOpen = false;
+        portMaster = TalonSRXFactory.createDefaultTalon(ClawConstants.portMaster); 
+        portMaster.set(ControlMode.PercentOutput, 0);
+        portMaster.setInverted(true);
+        portMaster.configVoltageCompSaturation(12.0, 0); //TODO Set constants \/
+        portMaster.enableVoltageCompensation(true);
 
-        leftMaster = TalonSRXFactory.createDefaultTalon(0); //TODO Add id
-        leftMaster.set(ControlMode.PercentOutput, 0);
-        leftMaster.setInverted(true);
-        leftMaster.configVoltageCompSaturation(12.0, 0); //TODO Set constants \/
-        leftMaster.enableVoltageCompensation(true);
-
-        rightMaster = TalonSRXFactory.createDefaultTalon(0); //TODO Add id
-        rightMaster.set(ControlMode.PercentOutput, 0);
-        rightMaster.setInverted(false);
-        rightMaster.configVoltageCompSaturation(12.0, 0); //TODO Set constants
-        rightMaster.enableVoltageCompensation(true);
+        starboardMaster = TalonSRXFactory.createDefaultTalon(ClawConstants.starboardMaster); 
+        starboardMaster.set(ControlMode.PercentOutput, 0);
+        starboardMaster.setInverted(false);
+        starboardMaster.configVoltageCompSaturation(12.0, 0); //TODO Set constants
+        starboardMaster.enableVoltageCompensation(true);
     }
 
     public static Intake getInstance(){
@@ -109,8 +117,8 @@ public class Intake extends Subsystem {
     }
 
     private synchronized void updateActuatorFromState(IntakeState state){
-        leftMaster.set(ControlMode.PercentOutput, state.leftMotor);
-        rightMaster.set(ControlMode.PercentOutput, state.rightMotor);
+        portMaster.set(ControlMode.PercentOutput, state.leftMotor);
+        starboardMaster.set(ControlMode.PercentOutput, state.rightMotor);
         setJaw(state.jawState);
 
         //TODO Add LEDs?
@@ -162,8 +170,8 @@ public class Intake extends Subsystem {
     public boolean checkSystem() {
         return TalonSRXChecker.CheckTalons(this, new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
             {
-                add(new TalonSRXChecker.TalonSRXConfig("intake right master", rightMaster));
-                add(new TalonSRXChecker.TalonSRXConfig("intake left master", leftMaster));
+                add(new TalonSRXChecker.TalonSRXConfig("intake right master", starboardMaster));
+                add(new TalonSRXChecker.TalonSRXConfig("intake left master", portMaster));
             }
         }, new TalonSRXChecker.CheckerConfig() {
             {
@@ -173,4 +181,18 @@ public class Intake extends Subsystem {
             }
         });
     }
+    
+    private void toggleClawOpen(){
+        if(grabberSolenoid.get() == Value.kReverse){
+            grabberSolenoid.set(Value.kForward);
+            clawOpen = true;
+        }else if(grabberSolenoid.get() == Value.kForward){
+            clawOpen = false;
+            grabberSolenoid.set(Value.kReverse);
+        }else {
+            grabberSolenoid.set(Value.kOff);
+        }
+
+    }
+    
 }
