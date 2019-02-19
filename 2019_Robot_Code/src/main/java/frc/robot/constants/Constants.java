@@ -41,4 +41,6 @@ public class Constants {
 
     //CAN Constants
     public static final int longCANTimeoutMs = 0; //TODO Change constant
+
+    //Wrist Constants
 }

@@ -22,6 +22,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Wrist;
+import frc.robot.subsystems.mCompressor;
 import frc.robot.utils.sensors.Gyro;
 import frc.robot.utils.sensors.Ultrasonic;
 import frc.robot.vision.VisionHandler;
@@ -62,6 +63,7 @@ public class Robot extends TimedRobot {
                     Wrist.getInstance()
             )
     );*/
+    private mCompressor compressor;
 
     @Override
     public void robotInit() {
@@ -118,6 +120,10 @@ public class Robot extends TimedRobot {
         Constants.gyro.zero();
         Constants.ultrasonic = new Ultrasonic();
 
+        //init compressor
+        compressor = mCompressor.getInstance();
+        
+
     }
 
     @Override
@@ -147,7 +153,7 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void autonomousInit() {
+    public void autonomousInit(){
 
     }
 

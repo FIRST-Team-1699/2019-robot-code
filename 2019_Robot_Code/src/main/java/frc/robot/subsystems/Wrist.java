@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.StickyFaults;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.constants.ClawConstants;
 import frc.robot.loops.ILooper;
 import frc.robot.loops.Loop;
 import frc.robot.utils.Util;
@@ -45,7 +46,7 @@ public class Wrist extends Subsystem {
     private ReflectingCSVWriter<PeriodicIO> csvWriter = null;
 
     private Wrist(){
-        master = TalonSRXFactory.createDefaultTalon(0); //TODO Add id constant
+        master = TalonSRXFactory.createDefaultTalon(ClawConstants.wristMoter);
         ErrorCode errorCode;
 
         errorCode = master.configRemoteFeedbackFilter(0, RemoteSensorSource.CANifier_Quadrature, 0, 0); //TODO Change constants
