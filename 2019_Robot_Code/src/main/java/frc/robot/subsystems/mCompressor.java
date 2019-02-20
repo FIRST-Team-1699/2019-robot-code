@@ -6,10 +6,10 @@ import frc.robot.constants.PnumaticsConstants;
 
 public class mCompressor extends Subsystem{
     private static mCompressor mCompressorInstance = null;
-    Compressor compressor;
+    private Compressor compressor;
+
     private mCompressor(){
         compressor = new Compressor(PnumaticsConstants.pcmid);
-        Start();
     }
     public static mCompressor getInstance(){
         if(mCompressorInstance == null)
@@ -29,7 +29,7 @@ public class mCompressor extends Subsystem{
 		 compressor.setClosedLoopControl(false);
     }
     
-    public void Start(){
+    public void start(){
         compressor.setClosedLoopControl(true);
     }
 }

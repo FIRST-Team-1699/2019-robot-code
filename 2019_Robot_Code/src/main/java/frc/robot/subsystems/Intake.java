@@ -1,11 +1,9 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.ClawConstants;
 import frc.robot.constants.PnumaticsConstants;
@@ -13,11 +11,6 @@ import frc.robot.loops.ILooper;
 import frc.robot.loops.Loop;
 import frc.robot.statemachine.IntakeStateMachine;
 import frc.robot.states.IntakeState;
-import frc.robot.utils.talon.TalonSRXChecker;
-import frc.robot.utils.talon.TalonSRXFactory;
-//import sun.font.TrueTypeFont;
-
-import java.util.ArrayList;
 
 public class Intake extends Subsystem {
     private static final boolean closed = false;
@@ -25,7 +18,7 @@ public class Intake extends Subsystem {
 
     private static Intake instance;
     private final DoubleSolenoid grabberSolenoid; //TODO Add comment for open/close
-    private final TalonSRX portMaster, starboardMaster;
+    private final VictorSP portMaster, starboardMaster;
     private final CarriageCanifier canifier = CarriageCanifier.getInstance();
     //TODO Add led control?
     private IntakeStateMachine.WantedAction wantedAction = IntakeStateMachine.WantedAction.WantManual;
@@ -35,22 +28,16 @@ public class Intake extends Subsystem {
     private boolean clawOpen;
 
     private Intake(){
-        grabberSolenoid = new DoubleSolenoid(PnumaticsConstants.pcmid
-                                            , PnumaticsConstants.ClawPistonsOpen
-                                            ,PnumaticsConstants.ClawPistonsClosed); 
-        
+        grabberSolenoid = new DoubleSolenoid(PnumaticsConstants.pcmid, PnumaticsConstants.ClawPistonsOpen, PnumaticsConstants.ClawPistonsClosed);
+        grabberSolenoid.set(Value.kReverse);
         clawOpen = false;
-        portMaster = TalonSRXFactory.createDefaultTalon(ClawConstants.portMaster); 
-        portMaster.set(ControlMode.PercentOutput, 0);
+        portMaster = new VictorSP(ClawConstants.portMaster);
+        portMaster.set(0);
         portMaster.setInverted(true);
-        portMaster.configVoltageCompSaturation(12.0, 0); //TODO Set constants \/
-        portMaster.enableVoltageCompensation(true);
 
-        starboardMaster = TalonSRXFactory.createDefaultTalon(ClawConstants.starboardMaster); 
-        starboardMaster.set(ControlMode.PercentOutput, 0);
+        starboardMaster = new VictorSP(ClawConstants.starboardMaster);
+        starboardMaster.set(0);
         starboardMaster.setInverted(false);
-        starboardMaster.configVoltageCompSaturation(12.0, 0); //TODO Set constants
-        starboardMaster.enableVoltageCompensation(true);
     }
 
     public static Intake getInstance(){
@@ -117,8 +104,8 @@ public class Intake extends Subsystem {
     }
 
     private synchronized void updateActuatorFromState(IntakeState state){
-        portMaster.set(ControlMode.PercentOutput, state.leftMotor);
-        starboardMaster.set(ControlMode.PercentOutput, state.rightMotor);
+        portMaster.set(state.leftMotor);
+        starboardMaster.set(state.rightMotor);
         setJaw(state.jawState);
 
         //TODO Add LEDs?
@@ -168,21 +155,11 @@ public class Intake extends Subsystem {
 
     @Override
     public boolean checkSystem() {
-        return TalonSRXChecker.CheckTalons(this, new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
-            {
-                add(new TalonSRXChecker.TalonSRXConfig("intake right master", starboardMaster));
-                add(new TalonSRXChecker.TalonSRXConfig("intake left master", portMaster));
-            }
-        }, new TalonSRXChecker.CheckerConfig() {
-            {
-                currentFloor = 2;
-                currentEpsilon = 2.0;
-                rpmSupplier = null;
-            }
-        });
+        return true;
     }
     
-    private void toggleClawOpen(){
+    public void toggleClawOpen(){
+        //System.out.println("Toggle");
         if(grabberSolenoid.get() == Value.kReverse){
             grabberSolenoid.set(Value.kForward);
             clawOpen = true;

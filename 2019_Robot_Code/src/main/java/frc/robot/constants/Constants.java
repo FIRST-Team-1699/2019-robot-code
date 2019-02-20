@@ -12,8 +12,10 @@ public class Constants {
     public static Accelerometer accel;
 
     //Joystick Constants
-    public static final int joystickPort = 0;
+    public static final int driveJoystickPort = 0;
+    public static final int appendageJoystickPort = 1;
     public static Joystick driveJoystick;
+    public static Joystick appendageJoystick;
 
     //Team Constants
     public static final String teamNumber = "1699";

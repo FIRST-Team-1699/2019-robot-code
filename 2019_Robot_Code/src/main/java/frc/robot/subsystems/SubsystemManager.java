@@ -91,6 +91,6 @@ public class SubsystemManager implements ILooper {
 
     @Override
     public void register(Loop loop) {
-
+        loops.add(loop);
     }
 }

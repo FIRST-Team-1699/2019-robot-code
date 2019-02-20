@@ -1,7 +1,7 @@
 package frc.robot.utils;
 
 /**
- * A drivetrain command consiting of the left, right motor settings and wether the brake mode is enabled.
+ * A drive train command consisting of the left, right motor settings and whether the brake mode is enabled.
  * 
  */
 public class DriveSignal {
@@ -15,6 +15,8 @@ public class DriveSignal {
 
 
     public DriveSignal(double left, double right, boolean b) {
+        portMotor = left;
+        starMotor = right;
     }
 
     public static DriveSignal NEUTRAL = new DriveSignal(0, 0);

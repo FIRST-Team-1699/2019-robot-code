@@ -2,18 +2,8 @@ package frc.robot;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.*;
 import frc.robot.constants.Constants;
-import frc.robot.constants.DriveBaseConstants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.loops.Looper;
 import frc.robot.subsystems.CarriageCanifier;
@@ -22,48 +12,37 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.SubsystemManager;
 import frc.robot.subsystems.Wrist;
-import frc.robot.subsystems.mCompressor;
+import frc.robot.utils.DriveHelper;
 import frc.robot.utils.sensors.Gyro;
 import frc.robot.utils.sensors.Ultrasonic;
-import frc.robot.vision.VisionHandler;
-import frc.robot.utils.NetworkTableClient;
 
 import java.util.Arrays;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 public class Robot extends TimedRobot {
-
-    //TODO Start remove./move
-    private NetworkTableClient nTableClient;
-    private NetworkTableInstance nTable;
-    private NetworkTableEntry xEntry;
-    private double centerX[];
-
-    //Light var
-    private boolean released = true;
-    //TODO End remove/move
-
     private Looper enabledLooper = new Looper();
     private Looper disabledLooper = new Looper();
 
- /* private CarriageCanifier carriageCanifier = CarriageCanifier.getInstance();
+    private static final DriveHelper driveHelper = new DriveHelper();
+
+    private boolean clawButtonReleased = false;
+
+    //private CarriageCanifier carriageCanifier = CarriageCanifier.getInstance();
     private DriveBase driveBase = DriveBase.getInstance();
     private Elevator elevator = Elevator.getInstance();
     private Intake intake = Intake.getInstance();
     private Wrist wrist = Wrist.getInstance();
 
     private final SubsystemManager subsystemManager = new SubsystemManager(
-            Arrays.asList(
-                    DriveBase.getInstance(),
-                    CarriageCanifier.getInstance(),
-                    Elevator.getInstance(),
-                    Intake.getInstance(),
-                    Wrist.getInstance()
-            )
-    );*/
-    private mCompressor compressor;
+          Arrays.asList(
+                  DriveBase.getInstance(),
+                  //CarriageCanifier.getInstance(),
+                  Elevator.getInstance(),
+                  Intake.getInstance(),
+                  Wrist.getInstance()
+          )
+    );
+    //private mCompressor compressor;
+    private Compressor compressor;
 
     @Override
     public void robotInit() {
@@ -71,42 +50,13 @@ public class Robot extends TimedRobot {
         //Start Camera
         UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
         camera.setResolution(640, 480);
-        camera.setBrightness(10);
-        camera.setExposureManual(10);
-
-        //Start Looper
-        //subsystemManager.registerEnabledLoops(enabledLooper);
-       // subsystemManager.registerDisabledLoops(disabledLooper);
-
-
-
-        //Motor Controller Definition
-        DriveBaseConstants.portMaster = new WPI_TalonSRX(DriveBaseConstants.portMasterPort);
-        DriveBaseConstants.portSlave = new WPI_TalonSRX(DriveBaseConstants.portSlavePort);
-        DriveBaseConstants.portMaster.setInverted(true);
-        DriveBaseConstants.portSlave.setInverted(true);
-        DriveBaseConstants.starboardMaster = new WPI_TalonSRX(DriveBaseConstants.starboardMasterPort);
-        DriveBaseConstants.starboardSlave = new WPI_TalonSRX(DriveBaseConstants.starboardSlavePort);
-        SpeedControllerGroup portMotorGroup = new SpeedControllerGroup(DriveBaseConstants.portMaster, DriveBaseConstants.portSlave);
-        SpeedControllerGroup starboardMotorGroup = new SpeedControllerGroup(DriveBaseConstants.starboardMaster, DriveBaseConstants.starboardSlave);
-       
-        DriveBaseConstants.driveTrain = new DifferentialDrive(portMotorGroup, starboardMotorGroup);
-
-        //Elevator Test Inits
-        ElevatorConstants.elevator1 = new WPI_TalonSRX(14);
-        ElevatorConstants.elevator2 = new WPI_TalonSRX(15);
-        SpeedControllerGroup elevatorGroup = new SpeedControllerGroup(ElevatorConstants.elevator1, ElevatorConstants.elevator2);
-        ElevatorConstants.elevator2.setInverted(true); //TODO Change
-
-        //Network table variables
-        nTableClient = NetworkTableClient.getInstance(); //TODO Implement or remove
-        NetworkTableInstance nTable = NetworkTableInstance.getDefault();
-        NetworkTable contourTable = nTable.getTable("GRIP/myContoursReport");
-        xEntry = contourTable.getEntry("centerX");
-        centerX = new double[0];
+        camera.setBrightness(50);
+        camera.setExposureManual(60);
+        //TODO Add exposure
 
         //Joystick Controller Definition
-        Constants.driveJoystick = new Joystick(Constants.joystickPort);
+        Constants.driveJoystick = new Joystick(Constants.driveJoystickPort);
+        Constants.appendageJoystick = new Joystick(Constants.appendageJoystickPort);
 
         //Init Light
         Constants.lightRelay = new Relay(Constants.lightRelatPort);
@@ -120,16 +70,20 @@ public class Robot extends TimedRobot {
         Constants.gyro.zero();
         Constants.ultrasonic = new Ultrasonic();
 
-        //init compressor
-        compressor = mCompressor.getInstance();
-        
+        //compressor = new Compressor(25);
+        //compressor.setClosedLoopControl(true);
+        //compressor.start();
 
+
+        subsystemManager.registerDisabledLoops(disabledLooper);
+        subsystemManager.registerEnabledLoops(enabledLooper);
     }
 
     @Override
     public void disabledInit(){
         enabledLooper.stop();
         DriveBase.getInstance().zeroSensors();
+        elevator.zeroSensors();
         disabledLooper.start();
     }
 
@@ -165,54 +119,56 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         //Run Drive Base
-        DriveBaseConstants.driveTrain.arcadeDrive(Constants.driveJoystick.getY() * -1, Constants.driveJoystick.getX()); //TODO Check correct axis
-        //System.out.println(Constants.driveJoystick.getX() * -1);
-        //System.out.println(Constants.ultrasonic.getDistance());
 
-        //Run Vision Line Up
-        if(Constants.driveJoystick.getRawButton(2) && released){
-            System.out.println("Running Vision Line Up");
-            released = false;
-            VisionHandler.runLineUp(xEntry, DriveBaseConstants.driveTrain);
-            //VisionLight.getInstance().toggleLightState();
+        if(Constants.appendageJoystick.getTrigger()){
+            elevator.setOpenLoop(Constants.appendageJoystick.getThrottle());
         }
+
+        //System.out.println(Constants.driveJoystick.getX() + " " + Constants.driveJoystick.getY());
+        driveBase.setOpenLoop(driveHelper.genDrive(Constants.driveJoystick.getY(), Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getTrigger(), true));
+
+        wrist.setOpenLoop(Constants.appendageJoystick.getY());
+
+        if(Constants.driveJoystick.getRawButton(2) && clawButtonReleased){
+            intake.toggleClawOpen();
+            clawButtonReleased = false;
+        }
+
         if(!Constants.driveJoystick.getRawButton(2)){
-            released = true;
+            clawButtonReleased = true;
         }
 
+        if(Constants.driveJoystick.getRawButton(7)){
+            intake.shootBall(0.75); //Intake
+        }else if(Constants.driveJoystick.getRawButton(8)){
+            intake.shootBall(-0.75); //Shoot
+        }else{
+            intake.setPower(0); //Off
+        }
+
+        if(Constants.appendageJoystick.getTrigger()){
+            elevator.setOpenLoop(Constants.appendageJoystick.getThrottle());
+        }else{
+            elevator.setOpenLoop(0);
+        }
     }
 
     @Override
     public void testPeriodic() {
-        //Elevator Test
-        System.out.println(Constants.driveJoystick.getThrottle() + " " + Constants.driveJoystick.getTrigger());
-        if(Constants.driveJoystick.getTrigger()){
-            ElevatorConstants.elevator1.set(-Constants.driveJoystick.getThrottle());
-            ElevatorConstants.elevator2.set(Constants.driveJoystick.getThrottle());
-        }else{
-            ElevatorConstants.elevator1.set(0);
-            ElevatorConstants.elevator2.set(0);
-        }
         //updateDashboard();
     }
 
-
-    int testCounter = 0;
     private void updateDashboard(){
-        if (testCounter++ > 200){
-            System.out.println("X: " + Constants.accel.getX() + " Y: " + Constants.accel.getY() + " Z: " + Constants.accel.getZ());
-            testCounter =0;
-        }
-        
+
     }
 
     private void outputToSmartDashboard(){
         //TODO Populate
-        //driveBase.outputTelemetry();
-      /*  carriageCanifier.outputTelemetry();
+        driveBase.outputTelemetry();
+        //carriageCanifier.outputTelemetry();
         driveBase.outputTelemetry();
         elevator.outputTelemetry();
         intake.outputTelemetry();
-        wrist.outputTelemetry();*/
+        wrist.outputTelemetry();
     }
 }

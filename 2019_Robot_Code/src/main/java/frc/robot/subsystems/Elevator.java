@@ -21,12 +21,12 @@ import frc.robot.utils.talon.TalonSRXUtil;
 import java.util.ArrayList;
 
 public class Elevator extends Subsystem {
-    public static final double homePositionInches = 0; //TODO Change value
+    private static final double homePositionInches = 0; //TODO Change value
     private static final int slot = 0; //TODO Change name
     private static final int positionCrontrolSlot = 2;
     private static final int reverseSoftLimit = -1000000; //TODO Change
     private static final int forwardSoftLimit = 500; //TODO Change
-    private static final double encoderTicksPerInch = 0; //TODO Change
+    private static final double encoderTicksPerInch = 75.6; //TODO Change
     private static Elevator instance = null;
     private Intake intake = Intake.getInstance();
     private final TalonSRX master, slave;
@@ -39,7 +39,7 @@ public class Elevator extends Subsystem {
         master = TalonSRXFactory.createDefaultTalon(ElevatorConstants.elevatorMasterId); //TODO Change constant
 
         //TODO Change constants \/
-        TalonSRXUtil.checkError(master.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 100), "Could not detect elevator encoder: "); //TODO Check input type
+        TalonSRXUtil.checkError(master.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 100), "Could not detect elevator encoder: "); //TODO Check input type
         TalonSRXUtil.checkError(master.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Constants.longCANTimeoutMs), "Could not set forward (down) limit switch elevator: "); //TODO Change constants
         TalonSRXUtil.checkError(master.configForwardSoftLimitThreshold(forwardSoftLimit, Constants.longCANTimeoutMs), "Could not set forward (down) soft limit switch elevator: ");
         TalonSRXUtil.checkError(master.configForwardSoftLimitEnable(true, Constants.longCANTimeoutMs), "Could not enable forward (down) soft limit switch elevator: ");

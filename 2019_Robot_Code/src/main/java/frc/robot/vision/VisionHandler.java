@@ -1,7 +1,5 @@
 package frc.robot.vision;
 
-import com.sun.jdi.request.ThreadDeathRequest;
-
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -103,7 +101,7 @@ public class VisionHandler {
                     while(!MathUtils.checkTolerance(Constants.gyro.getAngle() - rotatePID.getSetpoint(), .5) && pidIterations < 3 && !Thread.interrupted() && DriverStation.getInstance().isEnabled()){
                         startTime = System.nanoTime();
                         motorSpeed = -rotatePID.calculate(Constants.gyro.getAngle(), .01);
-                        DriveBaseConstants.driveTrain.arcadeDrive(motorSpeed, 0);
+                        //DriveBaseConstants.driveTrain.arcadeDrive(motorSpeed, 0);
                         //pidIterations++; //TODO Uncomment/add timeout
                         System.out.println("Gyro: " + Constants.gyro.getAngle() + " Gyro Setpoint: " + neededGyroChange + " motor value: " + motorSpeed);
 
