@@ -18,7 +18,7 @@ public class Intake extends Subsystem {
 
     private static Intake instance;
     private final DoubleSolenoid grabberSolenoid; //TODO Add comment for open/close
-    private final VictorSP portMaster, starboardMaster;
+    private final VictorSP master;
     private final CarriageCanifier canifier = CarriageCanifier.getInstance();
     //TODO Add led control?
     private IntakeStateMachine.WantedAction wantedAction = IntakeStateMachine.WantedAction.WantManual;
@@ -31,13 +31,9 @@ public class Intake extends Subsystem {
         grabberSolenoid = new DoubleSolenoid(PnumaticsConstants.pcmid, PnumaticsConstants.ClawPistonsOpen, PnumaticsConstants.ClawPistonsClosed);
         grabberSolenoid.set(Value.kReverse);
         clawOpen = false;
-        portMaster = new VictorSP(ClawConstants.portMaster);
-        portMaster.set(0);
-        portMaster.setInverted(true);
-
-        starboardMaster = new VictorSP(ClawConstants.starboardMaster);
-        starboardMaster.set(0);
-        starboardMaster.setInverted(false);
+        master = new VictorSP(ClawConstants.master);
+        master.set(0);
+        master.setInverted(true);
     }
 
     public static Intake getInstance(){
@@ -104,8 +100,7 @@ public class Intake extends Subsystem {
     }
 
     private synchronized void updateActuatorFromState(IntakeState state){
-        portMaster.set(state.leftMotor);
-        starboardMaster.set(state.rightMotor);
+        master.set(state.leftMotor);
         setJaw(state.jawState);
 
         //TODO Add LEDs?

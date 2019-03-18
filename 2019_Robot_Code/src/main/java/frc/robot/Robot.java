@@ -32,6 +32,11 @@ public class Robot extends TimedRobot {
     private Intake intake = Intake.getInstance();
     private Wrist wrist = Wrist.getInstance();
 
+    //TODO Move to subsystem
+    private VictorSP footMotor;
+    private DoubleSolenoid footSolenoid;
+    boolean footDown = false;
+
     private final SubsystemManager subsystemManager = new SubsystemManager(
           Arrays.asList(
                   DriveBase.getInstance(),
@@ -77,6 +82,11 @@ public class Robot extends TimedRobot {
 
         subsystemManager.registerDisabledLoops(disabledLooper);
         subsystemManager.registerEnabledLoops(enabledLooper);
+
+        //TODO Move
+        footMotor = new VictorSP(3);
+        footSolenoid = new DoubleSolenoid(0, 1);
+        footSolenoid.set(DoubleSolenoid.Value.kReverse); //TODO Check
     }
 
     @Override
@@ -119,15 +129,27 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopPeriodic() {
         //Run Drive Base
-
-        if(Constants.appendageJoystick.getTrigger()){
-            elevator.setOpenLoop(Constants.appendageJoystick.getThrottle());
+        if(Constants.driveJoystick.getTrigger()){
+            driveBase.setOpenLoop(driveHelper.genDrive(Constants.driveJoystick.getY(), Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getTrigger(), true));
+        }else{
+            //Run Vision
+            boolean linedUp = false;
         }
 
-        //System.out.println(Constants.driveJoystick.getX() + " " + Constants.driveJoystick.getY());
-        driveBase.setOpenLoop(driveHelper.genDrive(Constants.driveJoystick.getY(), Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getTrigger(), true));
+        //Run Wrist
+        boolean wantWristOut = Constants.appendageJoystick.getRawButton(5);
+        boolean wantWristStore = Constants.appendageJoystick.getRawButton(3);
 
-        wrist.setOpenLoop(Constants.appendageJoystick.getY());
+        if(wantWristOut){
+            wrist.setMotionProfileAngle(-90.0); //TODO Change?
+        }else if(wantWristStore){
+            wrist.setMotionProfileAngle(0.0); //TODO Change?
+        }else if(Constants.appendageJoystick.getRawButton(6)){
+            //Manual Mode
+            wrist.setOpenLoop(Constants.appendageJoystick.getY());
+        }else{
+            wrist.setOpenLoop(0.0); //TODO Change?
+        }
 
         if(Constants.driveJoystick.getRawButton(2) && clawButtonReleased){
             intake.toggleClawOpen();
@@ -146,10 +168,51 @@ public class Robot extends TimedRobot {
             intake.setPower(0); //Off
         }
 
-        if(Constants.appendageJoystick.getTrigger()){
-            elevator.setOpenLoop(Constants.appendageJoystick.getThrottle());
+        //Run Elevator
+        boolean wantBallScore = Constants.appendageJoystick.getRawButton(2);
+        boolean wantLowBall = Constants.appendageJoystick.getRawButton(2) && Constants.appendageJoystick.getRawButton(7);
+        boolean wantMidBall = Constants.appendageJoystick.getRawButton(2) && Constants.appendageJoystick.getRawButton(9);
+        boolean wantHighBall = Constants.appendageJoystick.getRawButton(2) && Constants.appendageJoystick.getRawButton(11);
+        boolean wantLowHatch = Constants.appendageJoystick.getRawButton(7);
+        boolean wantMidHatch = Constants.appendageJoystick.getRawButton(9);
+        boolean wantHighHatch = Constants.appendageJoystick.getRawButton(11);
+        boolean wantStorage = Constants.appendageJoystick.getRawButton(8);
+
+        if(wantLowBall){
+            elevator.setMotionMagicPosition(ElevatorConstants.ballLow);
+        }else if(wantMidBall){
+            elevator.setMotionMagicPosition(ElevatorConstants.ballMiddle);
+        }else if(wantHighBall){
+            elevator.setMotionMagicPosition(ElevatorConstants.ballHigh);
+        }else if(wantLowHatch){
+            elevator.setMotionMagicPosition(ElevatorConstants.hatchLow);
+        }else if(wantMidHatch){
+            elevator.setMotionMagicPosition(ElevatorConstants.hatchMiddle);
+        }else if(wantHighHatch){
+            elevator.setMotionMagicPosition(ElevatorConstants.hatchHigh);
+        }else if(wantStorage) {
+            elevator.setMotionMagicPosition(ElevatorConstants.initialHeight); //TODO Change?
+        }else if(wantBallScore){
+            elevator.setMotionMagicPosition(ElevatorConstants.climbHeight);
+        }else if(Constants.driveJoystick.getTrigger()){
+            //Manual Mode
+            elevator.setOpenLoop(Constants.driveJoystick.getThrottle());
         }else{
-            elevator.setOpenLoop(0);
+            elevator.setOpenLoop(0.0); //TODO Change?
+        }
+
+        //TODO Make subsystem
+        //Run Climber Foot
+        if(Constants.driveJoystick.getRawButton(11)){
+            footMotor.set(0.7); //TODO Check direction
+        }else{
+            footMotor.set(0.0);
+        }
+
+        if(Constants.appendageJoystick.getRawButton(4) && footDown){
+            footSolenoid.set(DoubleSolenoid.Value.kReverse);
+        }else if(Constants.appendageJoystick.getRawButton(4) && !footDown){
+            footSolenoid.set(DoubleSolenoid.Value.kForward);
         }
     }
 
