@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.constants.ClawConstants;
+import frc.robot.constants.Constants;
 import frc.robot.loops.ILooper;
 import frc.robot.loops.Loop;
 import frc.robot.utils.Util;
@@ -48,132 +49,132 @@ public class Wrist extends Subsystem {
     private Wrist(){
         master = TalonSRXFactory.createDefaultTalon(ClawConstants.wristMoter);
         //TODO Add sensor control
-//        ErrorCode errorCode;
-//
-//        errorCode = master.configRemoteFeedbackFilter(0, RemoteSensorSource.CANifier_Quadrature, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist encoder!!!: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configSelectedFeedbackSensor(RemoteFeedbackDevice.RemoteSensor0, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Count not detect wrist encoder: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set forward limit switch wrise: " + errorCode, false);
-//        }
-//
-//       /* errorCode = master.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteCANifier, LimitSwitchNormal.NormallyOpen, canifier.getDeviceID(), 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set reverse limit switch wrist: " + errorCode, false);
-//        }*/
-//
-//        errorCode = master.configForwardSoftLimitThreshold(forwardSoftLimit, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set forward soft limit switch wrist: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configForwardSoftLimitEnable(true, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not enable forward soft limit switch wrist: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configReverseSoftLimitThreshold(reverseSoftLimit, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set reverse soft limit switch wrist: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configReverseSoftLimitEnable(true, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not enable reverse soft limit switch wrist: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configVoltageCompSaturation(12.0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist voltage compensation: " + errorCode, false);
-//        }
-//
-//        errorCode = master.config_kP(magicMotionSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist kp: " + errorCode, false);
-//        }
-//
-//        errorCode = master.config_kI(magicMotionSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist ki: " + errorCode, false);
-//        }
-//
-//        errorCode = master.config_kD(magicMotionSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist kd: " + errorCode, false);
-//        }
-//
-//        errorCode = master.config_kF(magicMotionSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist ki: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configMaxIntegralAccumulator(magicMotionSlot, 0, 0);
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist max integral: " + errorCode, false);
-//        }
-//
-//        errorCode = master.config_IntegralZone(magicMotionSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist i zone: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configAllowableClosedloopError(magicMotionSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist deadband: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configMotionAcceleration(0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist acceleration: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configMotionCruiseVelocity(0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist cruise velocity: " + errorCode, false); //TODO Change constants
-//        }
-//
-//        errorCode = master.config_kP(positionControlSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist kp: " + errorCode, false);
-//        }
-//
-//        errorCode = master.config_kI(positionControlSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist ki: " + errorCode, false);
-//        }
-//
-//        errorCode = master.config_kD(positionControlSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist kd: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configMaxIntegralAccumulator(positionControlSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist max integral: " + errorCode, false);
-//        }
-//
-//        errorCode = master.config_IntegralZone(positionControlSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist i zone: " + errorCode, false);
-//        }
-//
-//        errorCode = master.configAllowableClosedloopError(positionControlSlot, 0, 0); //TODO Change constants
-//        if(errorCode != ErrorCode.OK){
-//            DriverStation.reportError("Could not set wrist deadband: " + errorCode, false);
-//        }
+        ErrorCode errorCode;
 
-        TalonSRXUtil.checkError(master.configContinuousCurrentLimit(20, 0), "Could not set wrist continuous current limit."); //TODO Change constants
-        TalonSRXUtil.checkError(master.configPeakCurrentLimit(40, 0), "Could not set wrist peak current limit."); //TODO Change constants
-        TalonSRXUtil.checkError(master.configPeakCurrentDuration(200, 0), "Could not set wrist peak current duration."); //TODO Change constants
-        TalonSRXUtil.checkError(master.configClosedloopRamp(0, 0), "Could not set wrist voltage ramp rate: "); //TODO Change constants
+        errorCode = master.configRemoteFeedbackFilter(0, RemoteSensorSource.CANifier_Quadrature, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist encoder!!!: " + errorCode, false);
+        }
+
+        errorCode = master.configSelectedFeedbackSensor(RemoteFeedbackDevice.RemoteSensor0, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Count not detect wrist encoder: " + errorCode, false);
+        }
+
+        errorCode = master.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set forward limit switch wrise: " + errorCode, false);
+        }
+
+       /* errorCode = master.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteCANifier, LimitSwitchNormal.NormallyOpen, canifier.getDeviceID(), Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set reverse limit switch wrist: " + errorCode, false);
+        }*/
+
+        errorCode = master.configForwardSoftLimitThreshold(forwardSoftLimit, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set forward soft limit switch wrist: " + errorCode, false);
+        }
+
+        errorCode = master.configForwardSoftLimitEnable(true, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not enable forward soft limit switch wrist: " + errorCode, false);
+        }
+
+        errorCode = master.configReverseSoftLimitThreshold(reverseSoftLimit, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set reverse soft limit switch wrist: " + errorCode, false);
+        }
+
+        errorCode = master.configReverseSoftLimitEnable(true, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not enable reverse soft limit switch wrist: " + errorCode, false);
+        }
+
+        errorCode = master.configVoltageCompSaturation(12.0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist voltage compensation: " + errorCode, false);
+        }
+
+        errorCode = master.config_kP(magicMotionSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist kp: " + errorCode, false);
+        }
+
+        errorCode = master.config_kI(magicMotionSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist ki: " + errorCode, false);
+        }
+
+        errorCode = master.config_kD(magicMotionSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist kd: " + errorCode, false);
+        }
+
+        errorCode = master.config_kF(magicMotionSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist ki: " + errorCode, false);
+        }
+
+        errorCode = master.configMaxIntegralAccumulator(magicMotionSlot, 0, Constants.longCANTimeoutMs);
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist max integral: " + errorCode, false);
+        }
+
+        errorCode = master.config_IntegralZone(magicMotionSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist i zone: " + errorCode, false);
+        }
+
+        errorCode = master.configAllowableClosedloopError(magicMotionSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist deadband: " + errorCode, false);
+        }
+
+        errorCode = master.configMotionAcceleration(0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist acceleration: " + errorCode, false);
+        }
+
+        errorCode = master.configMotionCruiseVelocity(0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist cruise velocity: " + errorCode, false); //TODO Change constants
+        }
+
+        errorCode = master.config_kP(positionControlSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist kp: " + errorCode, false);
+        }
+
+        errorCode = master.config_kI(positionControlSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist ki: " + errorCode, false);
+        }
+
+        errorCode = master.config_kD(positionControlSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist kd: " + errorCode, false);
+        }
+
+        errorCode = master.configMaxIntegralAccumulator(positionControlSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist max integral: " + errorCode, false);
+        }
+
+        errorCode = master.config_IntegralZone(positionControlSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist i zone: " + errorCode, false);
+        }
+
+        errorCode = master.configAllowableClosedloopError(positionControlSlot, 0, Constants.longCANTimeoutMs); //TODO Change constants
+        if(errorCode != ErrorCode.OK){
+            DriverStation.reportError("Could not set wrist deadband: " + errorCode, false);
+        }
+
+        TalonSRXUtil.checkError(master.configContinuousCurrentLimit(20, Constants.longCANTimeoutMs), "Could not set wrist continuous current limit."); //TODO Change constants
+        TalonSRXUtil.checkError(master.configPeakCurrentLimit(40, Constants.longCANTimeoutMs), "Could not set wrist peak current limit."); //TODO Change constants
+        TalonSRXUtil.checkError(master.configPeakCurrentDuration(200, Constants.longCANTimeoutMs), "Could not set wrist peak current duration."); //TODO Change constants
+        TalonSRXUtil.checkError(master.configClosedloopRamp(0, Constants.longCANTimeoutMs), "Could not set wrist voltage ramp rate: "); //TODO Change constants
 
         master.enableCurrentLimit(true);
         master.selectProfileSlot(0, 0); //TODO Check values
