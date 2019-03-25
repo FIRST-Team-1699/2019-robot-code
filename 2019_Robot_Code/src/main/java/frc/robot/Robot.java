@@ -2,11 +2,15 @@ package frc.robot;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.VictorSP;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.loops.Looper;
-import frc.robot.subsystems.CarriageCanifier;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
@@ -35,6 +39,7 @@ public class Robot extends TimedRobot {
     //TODO Move to subsystem
     private VictorSP footMotor;
     private DoubleSolenoid footSolenoid;
+    boolean footLatch = true; //Foot button not pressed
     boolean footDown = false;
 
     private final SubsystemManager subsystemManager = new SubsystemManager(
@@ -47,7 +52,7 @@ public class Robot extends TimedRobot {
           )
     );
     //private mCompressor compressor;
-    private Compressor compressor;
+   // private Compressor compressor;
 
     @Override
     public void robotInit() {
@@ -85,8 +90,9 @@ public class Robot extends TimedRobot {
 
         //TODO Move
         footMotor = new VictorSP(3);
-        footSolenoid = new DoubleSolenoid(0, 1);
-        footSolenoid.set(DoubleSolenoid.Value.kReverse); //TODO Check
+        footSolenoid = new DoubleSolenoid(2, 3);
+        footSolenoid.clearAllPCMStickyFaults();
+        footSolenoid.set(DoubleSolenoid.Value.kForward); //TODO Check
     }
 
     @Override
@@ -118,23 +124,25 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit(){
-
+        disabledLooper.stop();
+        enabledLooper.start();
     }
 
     @Override
     public void autonomousPeriodic() {
-
+        runRobot();
     }
 
     @Override
     public void teleopPeriodic() {
+        runRobot();
+    }
+
+    private void runRobot(){
+        outputToSmartDashboard();
+
         //Run Drive Base
-        if(Constants.driveJoystick.getTrigger()){
-            driveBase.setOpenLoop(driveHelper.genDrive(Constants.driveJoystick.getY(), Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getTrigger(), true));
-        }else{
-            //Run Vision
-            boolean linedUp = false;
-        }
+        driveBase.setOpenLoop(driveHelper.genDrive(Constants.driveJoystick.getY(), Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getTrigger(), true));
 
         //Run Wrist
         boolean wantWristOut = Constants.appendageJoystick.getRawButton(5);
@@ -194,7 +202,7 @@ public class Robot extends TimedRobot {
             elevator.setMotionMagicPosition(ElevatorConstants.initialHeight); //TODO Change?
         }else if(wantBallScore){
             elevator.setMotionMagicPosition(ElevatorConstants.climbHeight);
-        }else if(Constants.driveJoystick.getTrigger()){
+        }else if(Constants.appendageJoystick.getTrigger()){
             //Manual Mode
             elevator.setOpenLoop(Constants.driveJoystick.getThrottle());
         }else{
@@ -205,14 +213,29 @@ public class Robot extends TimedRobot {
         //Run Climber Foot
         if(Constants.driveJoystick.getRawButton(11)){
             footMotor.set(0.7); //TODO Check direction
-        }else{
+        } else if (Constants.driveJoystick.getRawButton(12)) {
+            footMotor.set(-0.7);
+        } else {
             footMotor.set(0.0);
         }
 
-        if(Constants.appendageJoystick.getRawButton(4) && footDown){
-            footSolenoid.set(DoubleSolenoid.Value.kReverse);
-        }else if(Constants.appendageJoystick.getRawButton(4) && !footDown){
+        if(Constants.appendageJoystick.getRawButton(4) && footLatch){
+            toggleFoot();
+            footLatch = false;
+        }
+
+        if(!Constants.appendageJoystick.getRawButton(4)){
+            footLatch = true;
+        }
+    }
+
+    private void toggleFoot() {
+        if(!footDown){
+            footSolenoid.set(DoubleSolenoid.Value.kReverse); //TODO Check Sides
+            footDown = true;
+        }else{
             footSolenoid.set(DoubleSolenoid.Value.kForward);
+            footDown = false;
         }
     }
 

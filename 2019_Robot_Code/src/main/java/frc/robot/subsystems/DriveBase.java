@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.robot.constants.DriveBaseConstants;
 import frc.robot.utils.DriveSignal;
@@ -26,6 +27,10 @@ public class DriveBase extends Subsystem {
         starMaster.setInverted(true);
         starSlave.setInverted(true);
 
+        portMaster.setNeutralMode(NeutralMode.Brake);
+        portSlave.setNeutralMode(NeutralMode.Brake);
+        starMaster.setNeutralMode(NeutralMode.Brake);
+        starSlave.setNeutralMode(NeutralMode.Brake);
     }
 
     public static DriveBase getInstance() {

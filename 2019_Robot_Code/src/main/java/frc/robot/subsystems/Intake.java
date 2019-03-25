@@ -161,8 +161,6 @@ public class Intake extends Subsystem {
         }else if(grabberSolenoid.get() == Value.kForward){
             clawOpen = false;
             grabberSolenoid.set(Value.kReverse);
-        }else {
-            grabberSolenoid.set(Value.kOff);
         }
 
     }
