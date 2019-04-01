@@ -1,8 +1,9 @@
 package frc.robot.constants;
 
 public class ClawConstants {
-    public static final int master = 2;
-    public static final int wristMoter = 16;
+    public static final int portMaster = 2;
+    public static final int starMaster = 0;
+    public static final int wristMotor = 16;
 
     public static final double wristKp = 3.0;
     public static final double wristKi = 0.0;

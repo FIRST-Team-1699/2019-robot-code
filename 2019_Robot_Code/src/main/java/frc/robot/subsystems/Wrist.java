@@ -39,7 +39,7 @@ public class Wrist extends Subsystem {
     private ReflectingCSVWriter<PeriodicIO> csvWriter = null;
 
     private Wrist(){
-        master = TalonSRXFactory.createDefaultTalon(ClawConstants.wristMoter);
+        master = TalonSRXFactory.createDefaultTalon(ClawConstants.wristMotor);
         //TODO Add sensor control
         ErrorCode errorCode;
 

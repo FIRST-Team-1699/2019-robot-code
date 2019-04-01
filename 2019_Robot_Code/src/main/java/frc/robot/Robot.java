@@ -2,12 +2,7 @@ package frc.robot;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.*;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.loops.Looper;
@@ -52,17 +47,15 @@ public class Robot extends TimedRobot {
           )
     );
     //private mCompressor compressor;
-   // private Compressor compressor;
+    private Compressor compressor;
 
     @Override
     public void robotInit() {
         //TODO Try catch
         //Start Camera
         UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-        camera.setResolution(640, 480);
         camera.setBrightness(50);
         camera.setExposureManual(60);
-        //TODO Add exposure
 
         //Joystick Controller Definition
         Constants.driveJoystick = new Joystick(Constants.driveJoystickPort);
@@ -80,9 +73,9 @@ public class Robot extends TimedRobot {
         Constants.gyro.zero();
         Constants.ultrasonic = new Ultrasonic();
 
-        //compressor = new Compressor(25);
-        //compressor.setClosedLoopControl(true);
-        //compressor.start();
+        compressor = new Compressor(25);
+        compressor.setClosedLoopControl(true);
+        compressor.start();
 
 
         subsystemManager.registerDisabledLoops(disabledLooper);
