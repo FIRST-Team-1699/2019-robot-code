@@ -2,7 +2,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.ParamEnum;
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.StickyFaults;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,8 +26,8 @@ import java.util.ArrayList;
 public class Wrist extends Subsystem {
     private static final int magicMotionSlot = 0; //TODO Change all constants
     private static final int positionControlSlot = 1;
-    private static final int forwardSoftLimit = 0;
-    private static final int reverseSoftLimit = 0;
+    //private static final int forwardSoftLimit = 0;
+    //private static final int reverseSoftLimit = 0;
 
     private static final double homingOutput = -0.25;
     private boolean hasBeenZeroed = false;
@@ -63,25 +68,25 @@ public class Wrist extends Subsystem {
             DriverStation.reportError("Could not set reverse limit switch wrist: " + errorCode, false);
         }*/
 
-        errorCode = master.configForwardSoftLimitThreshold(forwardSoftLimit, Constants.longCANTimeoutMs); //TODO Change constants
-        if(errorCode != ErrorCode.OK){
-            DriverStation.reportError("Could not set forward soft limit switch wrist: " + errorCode, false);
-        }
+//        errorCode = master.configForwardSoftLimitThreshold(forwardSoftLimit, Constants.longCANTimeoutMs); //TODO Change constants
+//        if(errorCode != ErrorCode.OK){
+//            DriverStation.reportError("Could not set forward soft limit switch wrist: " + errorCode, false);
+//        }
 
-        errorCode = master.configForwardSoftLimitEnable(true, Constants.longCANTimeoutMs); //TODO Change constants
-        if(errorCode != ErrorCode.OK){
-            DriverStation.reportError("Could not enable forward soft limit switch wrist: " + errorCode, false);
-        }
+//        errorCode = master.configForwardSoftLimitEnable(true, Constants.longCANTimeoutMs); //TODO Change constants
+//        if(errorCode != ErrorCode.OK){
+//            DriverStation.reportError("Could not enable forward soft limit switch wrist: " + errorCode, false);
+//        }
 
-        errorCode = master.configReverseSoftLimitThreshold(reverseSoftLimit, Constants.longCANTimeoutMs); //TODO Change constants
-        if(errorCode != ErrorCode.OK){
-            DriverStation.reportError("Could not set reverse soft limit switch wrist: " + errorCode, false);
-        }
+//        errorCode = master.configReverseSoftLimitThreshold(reverseSoftLimit, Constants.longCANTimeoutMs); //TODO Change constants
+//        if(errorCode != ErrorCode.OK){
+//            DriverStation.reportError("Could not set reverse soft limit switch wrist: " + errorCode, false);
+//        }
 
-        errorCode = master.configReverseSoftLimitEnable(true, Constants.longCANTimeoutMs); //TODO Change constants
-        if(errorCode != ErrorCode.OK){
-            DriverStation.reportError("Could not enable reverse soft limit switch wrist: " + errorCode, false);
-        }
+//        errorCode = master.configReverseSoftLimitEnable(true, Constants.longCANTimeoutMs); //TODO Change constants
+//        if(errorCode != ErrorCode.OK){
+//            DriverStation.reportError("Could not enable reverse soft limit switch wrist: " + errorCode, false);
+//        }
 
         errorCode = master.configVoltageCompSaturation(12.0, Constants.longCANTimeoutMs); //TODO Change constants
         if(errorCode != ErrorCode.OK){
@@ -196,11 +201,11 @@ public class Wrist extends Subsystem {
         SmartDashboard.putNumber("Wrist Position", getPosition());
         SmartDashboard.putNumber("Wrist Ticks", periodicIO.positionTicks);
         SmartDashboard.putNumber("Wrist periodic demand", periodicIO.demand);
-        SmartDashboard.putBoolean("LIMR", periodicIO.limitSwitch);
+        //SmartDashboard.putBoolean("LIMR", periodicIO.limitSwitch);
 
         SmartDashboard.putNumber("Wrist RPM", getRPM());
         SmartDashboard.putNumber("Wrist Power %", periodicIO.outputPercent);
-        SmartDashboard.putBoolean("Wrist Limit Switch", periodicIO.limitSwitch);
+        //SmartDashboard.putBoolean("Wrist Limit Switch", periodicIO.limitSwitch);
         SmartDashboard.putNumber("Wrist Last Expected Trajectory", getSetpoint());
         SmartDashboard.putNumber("Wrist Current Trajectory Point", periodicIO.activeTrajectoryPosition);
         SmartDashboard.putNumber("Wrist Traj Vel", periodicIO.activeTrajectoryVelocity);
@@ -225,7 +230,7 @@ public class Wrist extends Subsystem {
     @Override
     public synchronized void zeroSensors(){
         master.setSelectedSensorPosition(0, 0, 0);
-        canifier.resetWristEncoder();
+        //canifier.resetWristEncoder();
         hasBeenZeroed = true;
     }
 
@@ -358,11 +363,11 @@ public class Wrist extends Subsystem {
         if(master.getControlMode() == ControlMode.MotionMagic){
             periodicIO.activeTrajectoryPosition = master.getActiveTrajectoryPosition();
 
-            if(periodicIO.activeTrajectoryPosition < reverseSoftLimit){
-                DriverStation.reportError("Active trajectory past reverse soft limit!", false);
-            }else if(periodicIO.activeTrajectoryPosition > forwardSoftLimit) {
-                DriverStation.reportError("Active trajectory past forward soft limit!", false);
-            }
+//            if(periodicIO.activeTrajectoryPosition < reverseSoftLimit){
+//                DriverStation.reportError("Active trajectory past reverse soft limit!", false);
+//            }else if(periodicIO.activeTrajectoryPosition > forwardSoftLimit) {
+//                DriverStation.reportError("Active trajectory past forward soft limit!", false);
+//            }
             final int newVel = master.getActiveTrajectoryVelocity();
 
             if(Util.epsilonEquals(newVel, 0, 5) || Util.epsilonEquals(newVel, periodicIO.activeTrajectoryVelocity, 5)){ //TODO Check constants
@@ -376,7 +381,7 @@ public class Wrist extends Subsystem {
             periodicIO.activeTrajectoryVelocity = 0;
             periodicIO.activeTrajectoryAccelerationRadPerS2 = 0.0;
         }
-        periodicIO.limitSwitch = canifier.getLimR();
+        //periodicIO.limitSwitch = canifier.getLimR();
         periodicIO.outputVoltage = master.getMotorOutputVoltage();
         periodicIO.outputPercent = master.getMotorOutputPercent();
         periodicIO.positionTicks = master.getSelectedSensorPosition(0);
@@ -447,7 +452,7 @@ public class Wrist extends Subsystem {
         public double outputPercent;
         public double outputVoltage;
         public double feedForward;
-        public boolean limitSwitch;
+        //public boolean limitSwitch;
 
         public double demand;
     }

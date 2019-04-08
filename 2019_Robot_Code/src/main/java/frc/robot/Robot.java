@@ -2,9 +2,16 @@ package frc.robot;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.VictorSP;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.PnumaticsConstants;
 import frc.robot.loops.Looper;
 import frc.robot.subsystems.DriveBase;
 import frc.robot.subsystems.Elevator;
@@ -34,8 +41,12 @@ public class Robot extends TimedRobot {
     //TODO Move to subsystem
     private VictorSP footMotor;
     private DoubleSolenoid footSolenoid;
+    private DoubleSolenoid ratchetSolenoid;
     boolean footLatch = true; //Foot button not pressed
     boolean footDown = false;
+
+    boolean clawRatchetEngaged = false;
+    boolean clawLatch = true; //Claw button not pressed
 
     private final SubsystemManager subsystemManager = new SubsystemManager(
           Arrays.asList(
@@ -73,7 +84,7 @@ public class Robot extends TimedRobot {
         Constants.gyro.zero();
         Constants.ultrasonic = new Ultrasonic();
 
-        compressor = new Compressor(25);
+        compressor = new Compressor(0);
         compressor.setClosedLoopControl(true);
         compressor.start();
 
@@ -82,10 +93,13 @@ public class Robot extends TimedRobot {
         subsystemManager.registerEnabledLoops(enabledLooper);
 
         //TODO Move
-        footMotor = new VictorSP(3);
-        footSolenoid = new DoubleSolenoid(2, 3);
+        footMotor = new VictorSP(1);
+        footSolenoid = new DoubleSolenoid(PnumaticsConstants.BigPistonOpen, PnumaticsConstants.BigPistonClosed);
         footSolenoid.clearAllPCMStickyFaults();
-        footSolenoid.set(DoubleSolenoid.Value.kForward); //TODO Check
+        footSolenoid.set(DoubleSolenoid.Value.kForward);
+
+        ratchetSolenoid = new DoubleSolenoid(PnumaticsConstants.ClawRatchetClosed, PnumaticsConstants.ClawRatchetOpen);
+        ratchetSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
     @Override
@@ -138,46 +152,46 @@ public class Robot extends TimedRobot {
         driveBase.setOpenLoop(driveHelper.genDrive(Constants.driveJoystick.getY(), Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getTrigger(), true));
 
         //Run Wrist
-        boolean wantWristOut = Constants.appendageJoystick.getRawButton(5);
-        boolean wantWristStore = Constants.appendageJoystick.getRawButton(3);
+        boolean wantWristOut = Constants.appendageJoystick.getRawButton(Constants.wantWristOutButton);
+        boolean wantWristStore = Constants.appendageJoystick.getRawButton(Constants.wantWristStoreButton);
 
         if(wantWristOut){
             wrist.setMotionProfileAngle(-90.0); //TODO Change?
         }else if(wantWristStore){
             wrist.setMotionProfileAngle(0.0); //TODO Change?
-        }else if(Constants.appendageJoystick.getRawButton(6)){
+        }else if(Constants.appendageJoystick.getRawButton(Constants.wantWristManual)){
             //Manual Mode
             wrist.setOpenLoop(Constants.appendageJoystick.getY());
         }else{
             wrist.setOpenLoop(0.0); //TODO Change?
         }
 
-        if(Constants.driveJoystick.getRawButton(2) && clawButtonReleased){
+        if(Constants.driveJoystick.getRawButton(Constants.toggleHatchCups) && clawButtonReleased){
             intake.toggleClawOpen();
             clawButtonReleased = false;
         }
 
-        if(!Constants.driveJoystick.getRawButton(2)){
+        if(!Constants.driveJoystick.getRawButton(Constants.toggleHatchCups)){
             clawButtonReleased = true;
         }
 
-        if(Constants.driveJoystick.getRawButton(7)){
-            intake.shootBall(0.75); //Intake
-        }else if(Constants.driveJoystick.getRawButton(8)){
-            intake.shootBall(-0.75); //Shoot
+        if(Constants.driveJoystick.getRawButton(Constants.intakeBallButton)){
+            intake.shootBall(0.65); //Intake
+        }else if(Constants.driveJoystick.getRawButton(Constants.shootBallButton)){
+            intake.shootBall(-0.85); //Shoot
         }else{
             intake.setPower(0); //Off
         }
 
         //Run Elevator
-        boolean wantBallScore = Constants.appendageJoystick.getRawButton(2);
-        boolean wantLowBall = Constants.appendageJoystick.getRawButton(2) && Constants.appendageJoystick.getRawButton(7);
-        boolean wantMidBall = Constants.appendageJoystick.getRawButton(2) && Constants.appendageJoystick.getRawButton(9);
-        boolean wantHighBall = Constants.appendageJoystick.getRawButton(2) && Constants.appendageJoystick.getRawButton(11);
-        boolean wantLowHatch = Constants.appendageJoystick.getRawButton(7);
-        boolean wantMidHatch = Constants.appendageJoystick.getRawButton(9);
-        boolean wantHighHatch = Constants.appendageJoystick.getRawButton(11);
-        boolean wantStorage = Constants.appendageJoystick.getRawButton(8);
+        boolean wantBallScore = Constants.appendageJoystick.getRawButton(Constants.ballActionButton);
+        boolean wantLowBall = Constants.appendageJoystick.getRawButton(Constants.ballActionButton) && Constants.appendageJoystick.getRawButton(Constants.wantElevatorLowButton);
+        boolean wantMidBall = Constants.appendageJoystick.getRawButton(Constants.ballActionButton) && Constants.appendageJoystick.getRawButton(Constants.wantElevatorMiddleButton);
+        boolean wantHighBall = Constants.appendageJoystick.getRawButton(Constants.ballActionButton) && Constants.appendageJoystick.getRawButton(Constants.wantElevatorHighButton);
+        boolean wantLowHatch = Constants.appendageJoystick.getRawButton(Constants.wantElevatorLowButton);
+        boolean wantMidHatch = Constants.appendageJoystick.getRawButton(Constants.wantElevatorMiddleButton);
+        boolean wantHighHatch = Constants.appendageJoystick.getRawButton(Constants.wantElevatorHighButton);
+        boolean wantStorage = Constants.appendageJoystick.getRawButton(Constants.wantElevatorStorageButton);
 
         if(wantLowBall){
             elevator.setMotionMagicPosition(ElevatorConstants.ballLow);
@@ -197,28 +211,37 @@ public class Robot extends TimedRobot {
             elevator.setMotionMagicPosition(ElevatorConstants.climbHeight);
         }else if(Constants.appendageJoystick.getTrigger()){
             //Manual Mode
-            elevator.setOpenLoop(Constants.driveJoystick.getThrottle());
+            elevator.setOpenLoop(Constants.appendageJoystick.getThrottle());
         }else{
             elevator.setOpenLoop(0.0); //TODO Change?
         }
 
         //TODO Make subsystem
         //Run Climber Foot
-        if(Constants.driveJoystick.getRawButton(11)){
-            footMotor.set(0.7); //TODO Check direction
-        } else if (Constants.driveJoystick.getRawButton(12)) {
+        if(Constants.driveJoystick.getRawButton(Constants.runClimberFootButton)){
+            footMotor.set(0.7);
+        } else if (Constants.driveJoystick.getRawButton(Constants.runClimberFootBackButton)) {
             footMotor.set(-0.7);
         } else {
             footMotor.set(0.0);
         }
 
-        if(Constants.appendageJoystick.getRawButton(4) && footLatch){
+        if(Constants.appendageJoystick.getRawButton(Constants.toggleFootPistonButton) && footLatch){
             toggleFoot();
             footLatch = false;
         }
 
-        if(!Constants.appendageJoystick.getRawButton(4)){
+        if(!Constants.appendageJoystick.getRawButton(Constants.toggleFootPistonButton)){
             footLatch = true;
+        }
+
+        if(Constants.appendageJoystick.getRawButton(Constants.toggleClawRatchet) && clawLatch){
+            toggleArmRatchet();
+            clawLatch = false;
+        }
+
+        if(!Constants.appendageJoystick.getRawButton(Constants.toggleClawRatchet)){
+            clawLatch = true;
         }
     }
 
@@ -229,6 +252,17 @@ public class Robot extends TimedRobot {
         }else{
             footSolenoid.set(DoubleSolenoid.Value.kForward);
             footDown = false;
+        }
+    }
+
+    //TODO Doesn't untoggle
+    private void toggleArmRatchet(){
+        if(!clawRatchetEngaged){
+            ratchetSolenoid.set(DoubleSolenoid.Value.kReverse); //TODO Check Sides
+            clawRatchetEngaged = true;
+        }else{
+            ratchetSolenoid.set(DoubleSolenoid.Value.kForward);
+            clawRatchetEngaged = false;
         }
     }
 

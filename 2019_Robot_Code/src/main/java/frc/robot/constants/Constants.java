@@ -45,4 +45,22 @@ public class Constants {
     public static final int longCANTimeoutMs = 0; //TODO Change constant
 
     //Wrist Constants
+
+    //Joystick constants
+    public static final int wantWristOutButton = 5;
+    public static final int wantWristStoreButton = 4;
+    public static final int wantWristManual = 6;
+    public static final int toggleHatchCups = 2;
+    public static final int intakeBallButton = 7;
+    public static final int shootBallButton = 8;
+    public static final int ballActionButton = 2;
+    public static final int wantElevatorLowButton = 7;
+    public static final int wantElevatorMiddleButton = 9;
+    public static final int wantElevatorHighButton = 11;
+    public static final int wantElevatorStorageButton = 8;
+    public static final int runClimberFootButton = 11;
+    public static final int runClimberFootBackButton = 12;
+    public static final int toggleFootPistonButton = 3;
+    public static final int toggleClawRatchet = 10;
+
 }
