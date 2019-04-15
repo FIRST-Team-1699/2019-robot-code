@@ -3,19 +3,21 @@ package frc.robot.constants;
 public class ElevatorConstants {
 
     //Elevator Constants
+
+    //Motor ids
     public static final int elevatorMasterId = 14;
     public static final int elevatorSlaveId = 15;
 
 
     public static final double epsilon = 1.0;
 
-    //PID Constants TODO Change constants
+    //PID Constants
     public static final double elevatorKP = 0.15;
     public static final double elevatorKI = 0.0;
     public static final double elevatorKD = 4.0;
     public static final double elevatorKF = 0.06;
     public static final double elevatorJogKP = 0.1;
-    public static final double elevatorJogKI = 0.0; //TODO Check usage
+    public static final double elevatorJogKI = 0.0;
     public static final double elevatorJogKD = 3.0;
     public static final double maxIntegralAccumulator = 500000.0;
     public static final int iZone = 0;

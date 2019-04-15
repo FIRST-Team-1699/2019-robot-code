@@ -1,6 +1,10 @@
 package frc.robot.constants;
 
 public class PnumaticsConstants {
+
+    //A list of constants for the pumatics
+
+    //Ids/ports for solenoids and the pcm
     public static final int pcmid = 0;
     public static final int BigPistonOpen = 2;
     public static final int BigPistonClosed = 3;

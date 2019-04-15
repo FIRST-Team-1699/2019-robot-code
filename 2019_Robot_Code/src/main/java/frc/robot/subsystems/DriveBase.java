@@ -11,9 +11,7 @@ import frc.robot.utils.talon.TalonSRXFactory;
 public class DriveBase extends Subsystem {
 
     private static DriveBase instance = null;
-    private final TalonSRX portMaster, portSlave, starMaster, starSlave; 
-    //private final DifferentialDrive drive;
-    //private final SpeedControllerGroup portGroup, starGroup;
+    private final TalonSRX portMaster, portSlave, starMaster, starSlave;
     private PeriodicIO periodicIO = new PeriodicIO();
 
     private DriveControlState mDriveControlState;

@@ -1,11 +1,13 @@
 <component name="libraryTable">
   <library name="Gradle: com.ctre.phoenix:wpiapi-java:5.13.0">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../../../Public/frc2019/maven/com/ctre/phoenix/wpiapi-java/5.13.0/wpiapi-java-5.13.0.jar!/" />
+      <root url="jar://Z:/../../../Public/frc2019/maven/com/ctre/phoenix/wpiapi-java/5.13.0/wpiapi-java-5.13.0.jar!/" />
+      <root url="jar://C:/Users/Public/frc2019/maven/com/ctre/phoenix/wpiapi-java/5.13.0/wpiapi-java-5.13.0.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/../../../../../../Public/frc2019/maven/com/ctre/phoenix/wpiapi-java/5.13.0/wpiapi-java-5.13.0-sources.jar!/" />
+      <root url="jar://Z:/../../../Public/frc2019/maven/com/ctre/phoenix/wpiapi-java/5.13.0/wpiapi-java-5.13.0-sources.jar!/" />
+      <root url="jar://C:/Users/Public/frc2019/maven/com/ctre/phoenix/wpiapi-java/5.13.0/wpiapi-java-5.13.0-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

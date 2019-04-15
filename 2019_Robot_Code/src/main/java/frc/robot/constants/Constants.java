@@ -8,6 +8,8 @@ import frc.robot.utils.sensors.Ultrasonic;
 
 public class Constants {
 
+    //A general list of constants
+
     //Accelerometer
     public static Accelerometer accel;
 
@@ -43,8 +45,6 @@ public class Constants {
 
     //CAN Constants
     public static final int longCANTimeoutMs = 0; //TODO Change constant
-
-    //Wrist Constants
 
     //Joystick constants
     public static final int wantWristOutButton = 5;

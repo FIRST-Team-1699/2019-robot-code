@@ -1,10 +1,15 @@
 package frc.robot.constants;
 
 public class ClawConstants {
+
+    //A list of constants used to run the claw
+
+    //Motor ports
     public static final int portMaster = 2;
     public static final int starMaster = 0;
     public static final int wristMotor = 16;
 
+    //Wrist vars
     public static final double wristKp = 3.0;
     public static final double wristKi = 0.0;
     public static final double wristKd = 50.0;
@@ -17,7 +22,6 @@ public class ClawConstants {
     public static final double wristKfMultiplierWithoutCube = 0.1;
     public static final double wristElevatorAccelerationMultiplier = -1.0;
     public static final double wristEpsilon = 2.0;
-
     public static final int wristMaxIntegralAccumulator = 500000;
     public static final int wristIZone = 500;
     public static final int wristDeadband = 5;
