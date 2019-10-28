@@ -107,7 +107,7 @@ public class Intake extends Subsystem {
 
     private synchronized void updateActuatorFromState(IntakeState state){
         portMaster.set(state.leftMotor);
-        starMaster.set(state.rightMotor);
+        starMaster.set(state.rightMotor);     
         setJaw(state.jawState);
 
         //TODO Add LEDs?

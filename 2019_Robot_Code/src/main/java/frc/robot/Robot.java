@@ -67,6 +67,7 @@ public class Robot extends TimedRobot {
         UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
         camera.setBrightness(50);
         camera.setExposureManual(60);
+        camera.setFPS(30);
 
         //Joystick Controller Definition
         Constants.driveJoystick = new Joystick(Constants.driveJoystickPort);
@@ -152,16 +153,17 @@ public class Robot extends TimedRobot {
         driveBase.setOpenLoop(driveHelper.genDrive(Constants.driveJoystick.getY(), Constants.driveJoystick.getX() * -1, Constants.driveJoystick.getTrigger(), true));
 
         //Run Wrist
-        boolean wantWristOut = Constants.appendageJoystick.getRawButton(Constants.wantWristOutButton);
-        boolean wantWristStore = Constants.appendageJoystick.getRawButton(Constants.wantWristStoreButton);
+        //boolean wantWristOut = Constants.appendageJoystick.getRawButton(Constants.wantWristOutButton);
+        //boolean wantWristStore = Constants.appendageJoystick.getRawButton(Constants.wantWristStoreButton);
 
-        if(wantWristOut){
-            wrist.setMotionProfileAngle(-90.0); //TODO Change?
-        }else if(wantWristStore){
-            wrist.setMotionProfileAngle(0.0); //TODO Change?
-        }else if(Constants.appendageJoystick.getRawButton(Constants.wantWristManual)){
+        // if(wantWristOut){
+        //     wrist.setMotionProfileAngle(-90.0); //TODO Change?
+        // }else if(wantWristStore){
+        //     wrist.setMotionProfileAngle(0.0); //TODO Change?
+        // }else 
+        if(Constants.appendageJoystick.getRawButton(Constants.wantWristManual)){
             //Manual Mode
-            wrist.setOpenLoop(Constants.appendageJoystick.getY());
+            wrist.setOpenLoop(0.25 * Constants.appendageJoystick.getY());
         }else{
             wrist.setOpenLoop(0.0); //TODO Change?
         }
@@ -176,11 +178,12 @@ public class Robot extends TimedRobot {
         }
 
         if(Constants.driveJoystick.getRawButton(Constants.intakeBallButton)){
-            intake.shootBall(0.65); //Intake
+            intake.shootBall(0.5); //Intake
         }else if(Constants.driveJoystick.getRawButton(Constants.shootBallButton)){
-            intake.shootBall(-0.85); //Shoot
+            intake.shootBall(-0.65); //Shoot
         }else{
-            intake.setPower(0); //Off
+            //TODO Test
+            intake.shootBall(0.15); //Off
         }
 
         //Run Elevator
